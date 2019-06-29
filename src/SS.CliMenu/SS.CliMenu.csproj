@@ -1,99 +1,48 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A5E53B8F-732A-4226-97DE-45198215BDC6}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SS.CliMenu</RootNamespace>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>SS.CliMenu</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
+    <AssemblyVersion>1.0.1906.95</AssemblyVersion>
+    <FileVersion>1.0.1906.95</FileVersion>
+    <Product>SS.CliMenu</Product>
+    <Company>Simpler Software</Company>
+    <Copyright>(c) 2019 Simpler Software. All rights reserved.</Copyright>
+    <Version>1.0.1906.96</Version>
+    <Authors>John W Carew</Authors>
+    <Description>CLI menu infrastructure for PowerShell.
+This is a major modified version of https://github.com/torgro/cliMenu with some advanced features.</Description>
+    <PackageProjectUrl>https://github.com/SimplerSoftware/SS.CliMenu</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/SimplerSoftware/SS.CliMenu/blob/master/LICENSE.md</PackageLicenseUrl>
+    <PackageTags>Menu;Cli;Console</PackageTags>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\SS.CliMenu.xml</DocumentationFile>
-    <XmlDoc2CmdletDocStrict>true</XmlDoc2CmdletDocStrict>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>none</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <XmlDoc2CmdletDocStrict>true</XmlDoc2CmdletDocStrict>
-    <DocumentationFile>bin\Release\SS.CliMenu.xml</DocumentationFile>
-  </PropertyGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="set module=&quot;$(TargetName)&quot;&#xD;&#xA;set &quot;Personal=&quot;&#xD;&#xA;set &quot;ModuleVersion=&quot;&#xD;&#xA;for /f &quot;delims=&quot; %25%25A in ('powershell -Command &quot;(Get-Content .\SS.CliMenu.psd1 -Raw | Invoke-Expression).ModuleVersion&quot;') do set &quot;ModuleVersion=%25%25~A&quot;&#xD;&#xA;for /f &quot;delims=&quot; %25%25A in ('powershell -Command &quot;[Environment]::GetFolderPath('MyDocuments') | Out-String&quot;') do set &quot;Personal=%25%25~A&quot;&#xD;&#xA;if not defined Personal exit /b 1&#xD;&#xA;echo ModuleVersion is %25ModuleVersion%25&#xD;&#xA;echo Coping to &quot;%25Personal%25\WindowsPowerShell\Modules\%25module%25\&quot;&#xD;&#xA;&#xD;&#xA;del /Q &quot;%25Personal%25\WindowsPowerShell\Modules\%25module%25\%25ModuleVersion%25\*.*&quot;&#xD;&#xA;xcopy /Y &quot;$(TargetDir)$(TargetFileName)&quot; &quot;%25Personal%25\WindowsPowerShell\Modules\%25module%25\%25ModuleVersion%25\bin\&quot;&#xD;&#xA;if $(ConfigurationName) == Debug xcopy /Y &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;%25Personal%25\WindowsPowerShell\Modules\%25module%25\%25ModuleVersion%25\bin\&quot;&#xD;&#xA;xcopy /Y &quot;$(TargetDir)SS.CliMenu.Models.dll&quot; &quot;%25Personal%25\WindowsPowerShell\Modules\%25module%25\%25ModuleVersion%25\bin\&quot;&#xD;&#xA;xcopy /Y &quot;$(TargetDir)*Help.xml&quot; &quot;%25Personal%25\WindowsPowerShell\Modules\%25module%25\%25ModuleVersion%25\bin\&quot;&#xD;&#xA;xcopy /Y &quot;$(TargetDir)*.psd1&quot; &quot;%25Personal%25\WindowsPowerShell\Modules\%25module%25\%25ModuleVersion%25\&quot;&#xD;&#xA;xcopy /Y &quot;$(TargetDir)*.txt&quot; &quot;%25Personal%25\WindowsPowerShell\Modules\%25module%25\%25ModuleVersion%25\&quot;&#xD;&#xA;" />
+  </Target>
+
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\SS.CliMenu\packages\Microsoft.PowerShell.5.ReferenceAssemblies.1.1.0\lib\net4\System.Management.Automation.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
+    <PackageReference Include="PowerShellStandard.Library" Version="5.1.0">
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="XmlDoc2CmdletDoc" Version="0.2.12">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="CliMenuOptions.cs" />
-    <Compile Include="GetCliMenuOptionCmdLet.cs" />
-    <Compile Include="MenuItemObject.cs" />
-    <Compile Include="MenuObject.cs" />
-    <Compile Include="NewCliMenuCmdLet.cs" />
-    <Compile Include="NewCliMenuItemCmdLet.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SetCliMenuOptionCmdLet.cs" />
-    <Compile Include="ShowCliMenuCmdLet.cs" />
-    <Compile Include="UICmdLet.cs" />
-    <Compile Include="WriteCliMenuLineCmdLet.cs" />
+    <ProjectReference Include="..\SS.CliMenu.Models\SS.CliMenu.Models.csproj" />
   </ItemGroup>
+
   <ItemGroup>
-    <None Include="LICENSE.md" />
-    <None Include="packages.config" />
-    <None Include="SS.CliMenu.psd1">
+    <None Update="LICENSE.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="SS.CliMenu.psd1">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="LICENSE.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\SS.CliMenu\packages\XmlDoc2CmdletDoc.0.2.10\build\XmlDoc2CmdletDoc.targets" Condition="Exists('..\SS.CliMenu\packages\XmlDoc2CmdletDoc.0.2.10\build\XmlDoc2CmdletDoc.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\SS.CliMenu\packages\XmlDoc2CmdletDoc.0.2.10\build\XmlDoc2CmdletDoc.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\SS.CliMenu\packages\XmlDoc2CmdletDoc.0.2.10\build\XmlDoc2CmdletDoc.targets'))" />
-  </Target>
-  <PropertyGroup>
-    <PostBuildEvent>set module="$(TargetName)"
-set "Personal="
-for /f "delims=" %2525%2525A in ('powershell -Command "[Environment]::GetFolderPath('MyDocuments') | Out-String"') do set "Personal=%2525%2525~A"
-exit
-if not defined Personal exit /b 1
-echo Coping to %2525Personal%2525\WindowsPowerShell\Modules\%2525module%2525\
 
-del /Q "%2525Personal%2525\WindowsPowerShell\Modules\%2525module%2525\*.*"
-xcopy /Y "$(TargetDir)*.*" "%2525Personal%2525\WindowsPowerShell\Modules\%2525module%2525\"
-del /Q "%2525Personal%2525\WindowsPowerShell\Modules\%2525module%2525\*.tmp"
-del /Q "%2525Personal%2525\WindowsPowerShell\Modules\%2525module%2525\*.xml"
-xcopy /Y "$(TargetDir)*Help.xml" "%2525Personal%2525\WindowsPowerShell\Modules\%2525module%2525\"
-</PostBuildEvent>
-  </PropertyGroup>
 </Project>

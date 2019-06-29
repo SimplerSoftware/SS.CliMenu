@@ -1,0 +1,355 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>SS.CliMenu</name>
+    </assembly>
+    <members>
+        <member name="T:SS.CliMenu.GetCliMenuOptionCmdLet">
+            <summary>
+            Returns a CliMenuOptions object with all menu options. This CmdLet has no parameters
+            <para type="synopsis">Get a list menu options</para>
+            <para type="description">Returns a CliMenuOptions object with all menu options. This CmdLet has no parameters</para>
+            <example>
+              <title>Default usage.</title>
+              <description>Returns default menu-items for all menus.</description>
+              <code>$opts = Get-CliMenuOption</code>
+            </example>
+            </summary>
+        </member>
+        <member name="T:SS.CliMenu.NewCliMenuCmdLet">
+            <summary>
+            You can create as many menus you like, however you may only have one main Menu. The Menu must have a name, hence the Name parameter is Mandatory. The first Menu you create will become the main Menu even if you do not specify the IsMainMenu switch.
+            <para type="synopsis">Create a new Menu</para>
+            <para type="description">You can create as many menus you like, however you may only have one main Menu. The Menu must have a name, hence the Name parameter is Mandatory. The first Menu you create will become the main Menu even if you do not specify the IsMainMenu switch.</para>
+            <example>
+              <title>Default usage.</title>
+              <description>This will create a new Menu with name MainMenu. If this is the first Menu, it will be created as a main Menu</description>
+              <code>New-CliMenu -Name "MainMenu"</code>
+            </example>
+            </summary>
+        </member>
+        <member name="P:SS.CliMenu.NewCliMenuCmdLet.Name">
+            <summary>
+            Normally you would like to specify a name without space and Camel-case the name.
+            <para type="description">Normally you would like to specify a name without space and Camel-case the name.</para>
+            </summary>
+        </member>
+        <member name="P:SS.CliMenu.NewCliMenuCmdLet.DisplayName">
+            <summary>
+            
+            <para type="description"></para>
+            </summary>
+        </member>
+        <member name="P:SS.CliMenu.NewCliMenuCmdLet.Description">
+            <summary>
+            
+            <para type="description"></para>
+            </summary>
+        </member>
+        <member name="T:SS.CliMenu.NewCliMenuItemCmdLet">
+            <summary>
+            Create a new Menu-Item for a Menu.
+            <para type="synopsis">Create a new Menu-Item for a Menu.</para>
+            <para type="description">Menu-Items are the action elements of the Menu. You add Menu-Items to a Menu.</para>
+            <example>
+              <title>Default usage.</title>
+              <description>This will create a new Menu-Item for the menu named passed in. The Menu-object is piped into the New-CliMenuItem cmdlet.</description>
+              <code>$menu | New-MenuItem -Name "UnlockUser" -DisplayName "Unlock a user" -Script { Unlock-UserObject } -DisableConfirm $true</code>
+            </example>
+            </summary>
+        </member>
+        <member name="P:SS.CliMenu.NewCliMenuItemCmdLet.MenuObject">
+            <summary>
+            
+            <para type="description"></para>
+            </summary>
+        </member>
+        <member name="P:SS.CliMenu.NewCliMenuItemCmdLet.Name">
+            <summary>
+            The name of this menu item, for debug/logging purposes.
+            <para type="description">The name of this menu item, for debug/logging purposes.</para>
+            </summary>
+        </member>
+        <member name="P:SS.CliMenu.NewCliMenuItemCmdLet.DisplayName">
+            <summary>
+            The displayed value for this menu item.
+            <para type="description">The displayed value for this menu item.</para>
+            </summary>
+        </member>
+        <member name="P:SS.CliMenu.NewCliMenuItemCmdLet.Description">
+            <summary>
+            Currently not used, possibly used for help menu at some point.
+            <para type="description">Currently not used, possibly used for help menu at some point.</para>
+            </summary>
+        </member>
+        <member name="P:SS.CliMenu.NewCliMenuItemCmdLet.Script">
+            <summary>
+            Script to run when menu is selected.
+            <para type="description">Script to run when menu is selected.</para>
+            </summary>
+        </member>
+        <member name="P:SS.CliMenu.NewCliMenuItemCmdLet.ScriptArgs">
+            <summary>
+            Arguments to pass to Script when ran.
+            <para type="description">Arguments to pass to Script when ran.</para>
+            </summary>
+        </member>
+        <member name="P:SS.CliMenu.NewCliMenuItemCmdLet.Func">
+            <summary>
+            .Net Func to run when menu is selected. This is to support calling and building native .Net lambda methods from within a Cmdlet.
+            <para type="description">.Net Func to run when menu is selected. This is to support calling and building native .Net lambda methods from within a Cmdlet.</para>
+            </summary>
+        </member>
+        <member name="P:SS.CliMenu.NewCliMenuItemCmdLet.FuncArgs">
+            <summary>
+            Arguments to pass to Func when ran.
+            <para type="description">Arguments to pass to Func when ran.</para>
+            </summary>
+        </member>
+        <member name="P:SS.CliMenu.NewCliMenuItemCmdLet.VisibleScript">
+            <summary>
+            Script to run to evaluate if the menu item is visible or not.
+            <para type="description">Script to run to evaluate if the menu item is visible or not.</para>
+            </summary>
+        </member>
+        <member name="P:SS.CliMenu.NewCliMenuItemCmdLet.VisibleScriptArgs">
+            <summary>
+            Arguments to pass to visible script when ran.
+            <para type="description">Arguments to pass to visible script when ran.</para>
+            </summary>
+        </member>
+        <member name="P:SS.CliMenu.NewCliMenuItemCmdLet.VisibleFunc">
+            <summary>
+            .Net Func to run to evaluate if the menu item is visible or not. This is to support calling and building native .Net lambda methods from within a Cmdlet.
+            <para type="description">.Net Func to run to evaluate if the menu item is visible or not. This is to support calling and building native .Net lambda methods from within a Cmdlet.</para>
+            </summary>
+        </member>
+        <member name="P:SS.CliMenu.NewCliMenuItemCmdLet.VisibleFuncArgs">
+            <summary>
+            Arguments to pass to visible Func when ran.
+            <para type="description">Arguments to pass to visible Func when ran.</para>
+            </summary>
+        </member>
+        <member name="P:SS.CliMenu.NewCliMenuItemCmdLet.DisableConfirm">
+            <summary>
+            When true the menu will run without asking confirmation.
+            <para type="description">When true the menu will run without asking confirmation.</para>
+            </summary>
+        </member>
+        <member name="P:SS.CliMenu.NewCliMenuItemCmdLet.ForegroundColor">
+            <summary>
+            Text color of menu item.
+            <para type="description">Text color of menu item.</para>
+            </summary>
+        </member>
+        <member name="P:SS.CliMenu.NewCliMenuItemCmdLet.OptionKey">
+            <summary>
+            The key(s) to use to select this menu item.
+            <para type="description">The key(s) to use to select this menu item.</para>
+            </summary>
+        </member>
+        <member name="P:SS.CliMenu.NewCliMenuItemCmdLet.IsSpace">
+            <summary>
+            Is this menu item a blank line space.
+            <para type="description">Is this menu item a blank line space.</para>
+            </summary>
+        </member>
+        <member name="P:SS.CliMenu.NewCliMenuItemCmdLet.ConfirmTargetData">
+            <summary>
+            The target value passed to ShouldProcess.
+            <para type="description">The target value passed to ShouldProcess.</para>
+            </summary>
+        </member>
+        <member name="P:SS.CliMenu.NewCliMenuItemCmdLet.Default">
+            <summary>
+            Is this menu item the default option.
+            <para type="description">Is this menu item the default option.</para>
+            </summary>
+        </member>
+        <member name="T:SS.CliMenu.SetCliMenuOptionCmdLet">
+            <summary>
+            
+            <para type="synopsis"></para>
+            <para type="description"></para>
+            <example>
+              <title>Default usage.</title>
+              <description></description>
+              <code>Set-CliMenuOption -Heading 'PowerShell Menu'</code>
+            </example>
+            </summary>
+        </member>
+        <member name="P:SS.CliMenu.SetCliMenuOptionCmdLet.MenuFillChar">
+            <summary>
+            
+            <para type="description"></para>
+            </summary>
+        </member>
+        <member name="P:SS.CliMenu.SetCliMenuOptionCmdLet.MenuFillColor">
+            <summary>
+            
+            <para type="description"></para>
+            </summary>
+        </member>
+        <member name="P:SS.CliMenu.SetCliMenuOptionCmdLet.Heading">
+            <summary>
+            
+            <para type="description"></para>
+            </summary>
+        </member>
+        <member name="P:SS.CliMenu.SetCliMenuOptionCmdLet.HeadingColor">
+            <summary>
+            
+            <para type="description"></para>
+            </summary>
+        </member>
+        <member name="P:SS.CliMenu.SetCliMenuOptionCmdLet.SubHeading">
+            <summary>
+            
+            <para type="description"></para>
+            </summary>
+        </member>
+        <member name="P:SS.CliMenu.SetCliMenuOptionCmdLet.SubHeadingColor">
+            <summary>
+            
+            <para type="description"></para>
+            </summary>
+        </member>
+        <member name="P:SS.CliMenu.SetCliMenuOptionCmdLet.FooterText">
+            <summary>
+            
+            <para type="description"></para>
+            </summary>
+        </member>
+        <member name="P:SS.CliMenu.SetCliMenuOptionCmdLet.FooterTextColor">
+            <summary>
+            
+            <para type="description"></para>
+            </summary>
+        </member>
+        <member name="P:SS.CliMenu.SetCliMenuOptionCmdLet.MenuItemColor">
+            <summary>
+            
+            <para type="description"></para>
+            </summary>
+        </member>
+        <member name="P:SS.CliMenu.SetCliMenuOptionCmdLet.ViewOnlyColor">
+            <summary>
+            
+            <para type="description"></para>
+            </summary>
+        </member>
+        <member name="P:SS.CliMenu.SetCliMenuOptionCmdLet.MenuNameColor">
+            <summary>
+            
+            <para type="description"></para>
+            </summary>
+        </member>
+        <member name="P:SS.CliMenu.SetCliMenuOptionCmdLet.MaxWidth">
+            <summary>
+            
+            <para type="description"></para>
+            </summary>
+        </member>
+        <member name="P:SS.CliMenu.SetCliMenuOptionCmdLet.HeaderScript">
+            <summary>
+            
+            <para type="description"></para>
+            </summary>
+        </member>
+        <member name="P:SS.CliMenu.SetCliMenuOptionCmdLet.HeaderFunc">
+            <summary>
+            
+            <para type="description"></para>
+            </summary>
+        </member>
+        <member name="T:SS.CliMenu.ShowCliMenuCmdLet">
+            <summary>
+            Show the menu that is passed into the cmdlet.
+            <para type="synopsis">Show a Menu.</para>
+            <para type="description">Show the menu that is passed into the cmdlet.</para>
+            <example>
+              <title>Default usage.</title>
+              <description></description>
+              <code>$menu | Show-Menu</code>
+            </example>
+            </summary>
+        </member>
+        <member name="P:SS.CliMenu.ShowCliMenuCmdLet.InvokeItem">
+            <summary>
+            The index of the menu item to invoke.
+            <para type="description">The index of the menu item to invoke.</para>
+            </summary>
+        </member>
+        <member name="P:SS.CliMenu.ShowCliMenuCmdLet.Menu">
+            <summary>
+            
+            <para type="description"></para>
+            </summary>
+        </member>
+        <member name="P:SS.CliMenu.ShowCliMenuCmdLet.DefaultOption">
+            <summary>
+            The default option for the menu.
+            <para type="description">The default option for the menu.</para>
+            </summary>
+        </member>
+        <member name="P:SS.CliMenu.ShowCliMenuCmdLet.HeaderScript">
+            <summary>
+            
+            <para type="description"></para>
+            </summary>
+        </member>
+        <member name="P:SS.CliMenu.ShowCliMenuCmdLet.HeaderFunc">
+            <summary>
+            
+            <para type="description"></para>
+            </summary>
+        </member>
+        <member name="T:SS.CliMenu.WriteCliMenuLineCmdLet">
+            <summary>
+            
+            <para type="synopsis"></para>
+            <para type="description"></para>
+            <example>
+              <title>Default usage.</title>
+              <description></description>
+              <code>Write-CliMenuLine "Menu line item"</code>
+            </example>
+            <example>
+              <title>Default usage with script.</title>
+              <description></description>
+              <code>Write-CliMenuLine -Script { Write-Host "test" }</code>
+            </example>
+            </summary>
+        </member>
+        <member name="P:SS.CliMenu.WriteCliMenuLineCmdLet.Text">
+            <summary>
+            
+            <para type="description"></para>
+            </summary>
+        </member>
+        <member name="P:SS.CliMenu.WriteCliMenuLineCmdLet.Script">
+            <summary>
+            
+            <para type="description"></para>
+            </summary>
+        </member>
+        <member name="P:SS.CliMenu.WriteCliMenuLineCmdLet.Func">
+            <summary>
+            
+            <para type="description"></para>
+            </summary>
+        </member>
+        <member name="P:SS.CliMenu.WriteCliMenuLineCmdLet.Color">
+            <summary>
+            
+            <para type="description"></para>
+            </summary>
+        </member>
+        <member name="P:SS.CliMenu.WriteCliMenuLineCmdLet.IsMenuItem">
+            <summary>
+            
+            <para type="description"></para>
+            </summary>
+        </member>
+    </members>
+</doc>

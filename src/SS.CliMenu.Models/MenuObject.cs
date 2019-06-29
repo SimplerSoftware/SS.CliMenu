@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SS.CliMenu
+namespace SS.CliMenu.Models
 {
     /// <summary>
     /// A menu object that stores a menu's configuration settings.
@@ -12,9 +12,9 @@ namespace SS.CliMenu
     /// </summary>
     public class MenuObject
     {
-        public string Name { get; internal set; }
-        public string DisplayName { get; internal set; }
-        public string Description { get; internal set; }
-        public List<MenuItemObject> MenuItems { get; internal set; }
+        public string Name { get; set; }
+        public string DisplayName { get; set; }
+        public string Description { get; set; }
+        public List<MenuItemObject> MenuItems { get; set; }
     }
 }

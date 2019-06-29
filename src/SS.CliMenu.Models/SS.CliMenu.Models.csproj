@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Version>1.0.1906.29</Version>
+    <Authors>John W Carew</Authors>
+    <Company>Simpler Software</Company>
+    <Description>Shared models for SS.CliMenu, allowing to use strongly typed class in your menus.</Description>
+    <Copyright>(c) 2019 Simpler Software. All rights reserved.</Copyright>
+    <PackageLicenseUrl>https://github.com/SimplerSoftware/SS.CliMenu/blob/master/LICENSE.md</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/SimplerSoftware/SS.CliMenu</PackageProjectUrl>
+    <PackageTags>Menu;Cli;Console</PackageTags>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <AssemblyVersion>1.0.1906.29</AssemblyVersion>
+    <FileVersion>1.0.1906.29</FileVersion>
+    <NuGetPublishLocation>D:\References\Packages</NuGetPublishLocation>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="PowerShellStandard.Library" Version="5.1.0">
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="SS.NuGet.Publish" Version="1.0.1">      
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+
+  </ItemGroup>
+
+</Project>

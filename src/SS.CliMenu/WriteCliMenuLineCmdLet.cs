@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SS.CliMenu.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
@@ -41,6 +42,12 @@ namespace SS.CliMenu
         /// 
         /// <para type="description"></para>
         /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = "ByFunc")]
+        public Action<CliMenuOptions> Func { get; set; }
+        /// <summary>
+        /// 
+        /// <para type="description"></para>
+        /// </summary>
         [Parameter]
         public ConsoleColor Color { get; set; } = System.ConsoleColor.White;
         /// <summary>
@@ -52,10 +59,12 @@ namespace SS.CliMenu
 
         protected override void ProcessRecord()
         {
-            opts = GetVariableValue("CliMenuOptions", new CliMenuOptions(this.Host)) as CliMenuOptions;
+            opts = GetVariableValue("CliMenuOptions", new CliMenuOptions(this.Host.UI.RawUI.WindowSize.Width)) as CliMenuOptions;
 
             if (Script != null)
                 base.WriteMenuLine(Script, Color, IsMenuItem);
+            if (Func != null)
+                base.WriteMenuLine(Func, Color, IsMenuItem);
             else
                 base.WriteMenuLine(Text, Color, IsMenuItem);
 

@@ -1,0 +1,51 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net462</TargetFramework>
+    <AssemblyName>SS.CliMenu</AssemblyName>
+    <AssemblyVersion>1.0.1906.95</AssemblyVersion>
+    <FileVersion>1.0.1906.95</FileVersion>
+    <Product>SS.CliMenu</Product>
+    <Company>Simpler Software</Company>
+    <Copyright>(c) 2019 Simpler Software. All rights reserved.</Copyright>
+    <Version>1.0.1906.96</Version>
+    <Authors>John W Carew</Authors>
+    <Description>CLI menu infrastructure for PowerShell.
+This is a major modified version of https://github.com/torgro/cliMenu with some advanced features.</Description>
+    <PackageProjectUrl>https://github.com/SimplerSoftware/SS.CliMenu</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/SimplerSoftware/SS.CliMenu/blob/master/LICENSE.md</PackageLicenseUrl>
+    <PackageTags>Menu;Cli;Console</PackageTags>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>C:\Users\carejw\source\repos\SimplerSoftware\SS.CliMenu\SS.CliMenu.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="set module=&quot;$(TargetName)&quot;&#xD;&#xA;set &quot;Personal=&quot;&#xD;&#xA;set &quot;ModuleVersion=&quot;&#xD;&#xA;for /f &quot;delims=&quot; %25%25A in ('powershell -Command &quot;(Get-Content .\SS.CliMenu.psd1 -Raw | Invoke-Expression).ModuleVersion&quot;') do set &quot;ModuleVersion=%25%25~A&quot;&#xD;&#xA;for /f &quot;delims=&quot; %25%25A in ('powershell -Command &quot;[Environment]::GetFolderPath('MyDocuments') | Out-String&quot;') do set &quot;Personal=%25%25~A&quot;&#xD;&#xA;if not defined Personal exit /b 1&#xD;&#xA;echo ModuleVersion is %25ModuleVersion%25&#xD;&#xA;echo Coping to &quot;%25Personal%25\WindowsPowerShell\Modules\%25module%25\&quot;&#xD;&#xA;&#xD;&#xA;del /Q &quot;%25Personal%25\WindowsPowerShell\Modules\%25module%25\%25ModuleVersion%25\*.*&quot;&#xD;&#xA;xcopy /Y &quot;$(TargetDir)$(TargetFileName)&quot; &quot;%25Personal%25\WindowsPowerShell\Modules\%25module%25\%25ModuleVersion%25\bin\&quot;&#xD;&#xA;if $(ConfigurationName) == Debug xcopy /Y &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;%25Personal%25\WindowsPowerShell\Modules\%25module%25\%25ModuleVersion%25\bin\&quot;&#xD;&#xA;xcopy /Y &quot;$(TargetDir)SS.CliMenu.Models.dll&quot; &quot;%25Personal%25\WindowsPowerShell\Modules\%25module%25\%25ModuleVersion%25\bin\&quot;&#xD;&#xA;xcopy /Y &quot;$(TargetDir)*Help.xml&quot; &quot;%25Personal%25\WindowsPowerShell\Modules\%25module%25\%25ModuleVersion%25\bin\&quot;&#xD;&#xA;xcopy /Y &quot;$(TargetDir)*.psd1&quot; &quot;%25Personal%25\WindowsPowerShell\Modules\%25module%25\%25ModuleVersion%25\&quot;&#xD;&#xA;xcopy /Y &quot;$(TargetDir)*.txt&quot; &quot;%25Personal%25\WindowsPowerShell\Modules\%25module%25\%25ModuleVersion%25\&quot;&#xD;&#xA;" />
+  </Target>
+
+  <ItemGroup>
+    <PackageReference Include="PowerShellStandard.Library" Version="5.1.0">
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="XmlDoc2CmdletDoc" Version="0.2.12">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SS.CliMenu.Models\SS.CliMenu.Models.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="LICENSE.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="SS.CliMenu.psd1">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

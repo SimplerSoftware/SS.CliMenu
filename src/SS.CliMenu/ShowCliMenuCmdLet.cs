@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SS.CliMenu.Models;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -26,8 +27,8 @@ namespace SS.CliMenu
     public class ShowCliMenuCmdLet : UICmdLet
     {
         /// <summary>
-        /// 
-        /// <para type="description"></para>
+        /// The index of the menu item to invoke.
+        /// <para type="description">The index of the menu item to invoke.</para>
         /// </summary>
         [Parameter]
         public int InvokeItem { get; set; }
@@ -38,11 +39,24 @@ namespace SS.CliMenu
 		[Parameter(Mandatory = true, ValueFromPipeline = true)]
         public MenuObject Menu { get; set; }
         /// <summary>
+        /// The default option for the menu.
+        /// <para type="description">The default option for the menu.</para>
+        /// </summary>
+        [Parameter]
+        public string DefaultOption { get; set; } = "Q";
+        /// <summary>
         /// 
         /// <para type="description"></para>
         /// </summary>
         [Parameter]
-        public ScriptBlock Header { get; set; }
+        [Alias("Header")]
+        public ScriptBlock HeaderScript { get; set; }
+        /// <summary>
+        /// 
+        /// <para type="description"></para>
+        /// </summary>
+        [Parameter]
+        public Action<MenuObject, CliMenuOptions> HeaderFunc { get; set; }
 
         protected override void BeginProcessing()
         {
@@ -62,29 +76,67 @@ namespace SS.CliMenu
 
                     if (menuSelected != null)
                     {
-                        if (menuSelected.ConfirmBeforeInvoke && !this.ShouldProcess(menuSelected.ConfirmTargetData, $"{menuSelected.Name}"))
+                        WriteVerbose($"Menu: {menuSelected.Name}");
+                        if (menuSelected.DisableConfirm.HasValue && !menuSelected.DisableConfirm.Value && !this.ShouldProcess(menuSelected.ConfirmTargetData, $"{menuSelected.Name}"))
                         {
                             WriteWarning($"Execution aborted for [{menuSelected.Name}]");
                         }
-                        else if (menuSelected.Action != null)
+                        else if (menuSelected.Script != null)
                         {
-                            Host.UI.WriteLine(ConsoleColor.White, ConsoleColor.Blue, $"Invoking [{menuSelected.Name}]");
-                            Host.UI.WriteLine($"Args: {menuSelected.ActionArgs}");
+                            Host.UI.WriteLine(ConsoleColor.White, ConsoleColor.DarkBlue, $"Invoking [{menuSelected.Name}]");
+                            Host.UI.Write($"Args: ");
+                            if (menuSelected.ScriptArgs != null)
+                            {
+                                foreach (var arg in menuSelected.ScriptArgs)
+                                {
+                                    Host.UI.Write($"{arg} ");
+                                }
+                            }
+                            Host.UI.WriteLine();
                             try
                             {
-                                var r_objs = menuSelected.Action.InvokeWithContext(null, null, menuSelected.ActionArgs);
+                                WriteVerbose("Calling Script");
+                                var r_objs = menuSelected.Script.InvokeWithContext(null, null, menuSelected.ScriptArgs);
                                 foreach (var obj in r_objs)
                                     WriteObject(obj.BaseObject);
+                                WriteVerbose("Called Script");
                             }
                             catch (RuntimeException ex)
                             {
                                 WriteError(ex.ErrorRecord);
                             }
-                            Host.UI.WriteLine(ConsoleColor.White, ConsoleColor.Blue, $"Invoke [{menuSelected.Name}] Completed!");
+                            Host.UI.WriteLine(ConsoleColor.White, ConsoleColor.DarkBlue, $"Invoke [{menuSelected.Name}] Completed!");
+                        }
+                        else if (menuSelected.Func != null)
+                        {
+                            Host.UI.WriteLine(ConsoleColor.White, ConsoleColor.DarkBlue, $"Invoking [{menuSelected.Name}]");
+                            Host.UI.Write($"Args: ");
+                            if (menuSelected.FuncArgs != null)
+                            {
+                                foreach (var arg in menuSelected.FuncArgs)
+                                {
+                                    Host.UI.Write($"{arg} ");
+                                }
+                            }
+                            Host.UI.WriteLine();
+                            try
+                            {
+                                WriteVerbose("Calling Func");
+                                var r_objs = menuSelected.Func(menuSelected, menuSelected.FuncArgs ?? new object[0]);
+                                if (r_objs != null)
+                                    foreach (var obj in r_objs)
+                                        WriteObject(obj);
+                                WriteVerbose("Called Func");
+                            }
+                            catch (RuntimeException ex)
+                            {
+                                WriteError(ex.ErrorRecord);
+                            }
+                            Host.UI.WriteLine(ConsoleColor.White, ConsoleColor.DarkBlue, $"Invoke [{menuSelected.Name}] Completed!");
                         }
                         else
                         {
-                            WriteWarning($"No Action to perform for [{menuSelected.Name}]");
+                            WriteWarning($"No Script or Func to perform for [{menuSelected.Name}]");
                         }
                     }
                 }
@@ -93,7 +145,7 @@ namespace SS.CliMenu
                 #region Show Menu
                 Regex rxOption = new Regex("^\\d+$");
                 var menuLines = new ArrayList();
-                opts = GetVariableValue("CliMenuOptions", new CliMenuOptions(this.Host)) as CliMenuOptions;
+                opts = GetVariableValue("CliMenuOptions", new CliMenuOptions(this.Host.UI.RawUI.WindowSize.Width)) as CliMenuOptions;
 
                 if (Menu == null)
                 {
@@ -112,22 +164,44 @@ namespace SS.CliMenu
 
                 WriteMenuLine(menuEmptyLine, opts.MenuFillColor);
 
-                if (Header != null)
+                if (HeaderScript != null)
                 {
                     try
                     {
-                        Header.InvokeWithContext(null, null);
+                        HeaderScript.InvokeWithContext(null, null);
                     }
                     catch (RuntimeException ex)
                     {
                         WriteError(ex.ErrorRecord);
                     }
                 }
-                else if (opts.HeaderAction != null)
+                else if (opts.HeaderScript != null)
                 {
                     try
                     {
-                        opts.HeaderAction.InvokeWithContext(null, null);
+                        opts.HeaderScript.InvokeWithContext(null, null);
+                    }
+                    catch (RuntimeException ex)
+                    {
+                        WriteError(ex.ErrorRecord);
+                    }
+                }
+                else if (HeaderFunc != null)
+                {
+                    try
+                    {
+                        HeaderFunc(this.Menu, opts);
+                    }
+                    catch (RuntimeException ex)
+                    {
+                        WriteError(ex.ErrorRecord);
+                    }
+                }
+                else if (opts.HeaderFunc != null)
+                {
+                    try
+                    {
+                        opts.HeaderFunc(this.Menu, opts);
                     }
                     catch (RuntimeException ex)
                     {
@@ -153,18 +227,18 @@ namespace SS.CliMenu
                 foreach (var item in Menu.MenuItems)
                 {
                     ConsoleColor menuColor;
-                    if (!string.IsNullOrWhiteSpace(item.Option))
+                    if (!string.IsNullOrWhiteSpace(item.Option) && !(item.Func == null && item.Script == null))
                         menuColor = opts.MenuItemColor;
                     else
                         menuColor = opts.ViewOnlyColor;
 
                     visible = true;
-                    if (item.VisibleAction != null)
+                    if (item.VisibleScript != null)
                     {
                         Collection<PSObject> aOut = null;
                         try
                         {
-                            aOut = item.VisibleAction.InvokeWithContext(null, null, item.VisibleActionArgs);
+                            aOut = item.VisibleScript.InvokeWithContext(null, null, item.VisibleScriptArgs);
                         }
                         catch (RuntimeException ex)
                         {
@@ -173,20 +247,34 @@ namespace SS.CliMenu
                         if (aOut != null && aOut.Count > 0 && aOut[0].BaseObject is bool)
                             visible = (bool)aOut[0].BaseObject;
                         else
-                            WriteWarning($"Object returned from VisibleAction script is not a boolean value for menu item [{item.Name}], returned [{aOut}]");
+                            WriteWarning($"Object returned from VisibleScript script is not a boolean value for menu item [{item.Name}], returned [{aOut}]");
                     }
+                    else if (item.VisibleFunc != null)
+                    {
+                        try
+                        {
+                            visible = item.VisibleFunc(item, item.VisibleFuncArgs);
+                        }
+                        catch (RuntimeException ex)
+                        {
+                            WriteError(ex.ErrorRecord);
+                        }
+                    }
+
                     if (visible)
                     {
                         if (item.ForegroundColor != null)
                             menuColor = item.ForegroundColor.Value;
 
-                        if (item.IsSpace)
+                        if (item.IsSpace.HasValue && item.IsSpace.Value)
                             WriteMenuLine(" ", menuColor, true);
                         else if (!string.IsNullOrWhiteSpace(item.Option))
                         {
+                            if (DefaultOption == "Q" && (item.Default ?? false)) // We only use the first option that is set as default.
+                                DefaultOption = item.Option;
                             var Option = item.Option;
                             if (maxIdxOptions >= 10 && rxOption.IsMatch(item.Option) && int.Parse(item.Option) < 10)
-                                Option = " " + Option;
+                                Option = $" {Option}";
                             WriteMenuLine($"{Option}. {item.DisplayName}", menuColor, true);
                         }
                         else
@@ -206,11 +294,19 @@ namespace SS.CliMenu
                 // Bottom border
                 WriteMenuLine(menuFrame, opts.MenuFillColor);
 
-                Host.UI.Write("Please choose a option [Q] ");
+                Host.UI.Write($"Please choose a option [{DefaultOption}] ");
                 var userSelection = Host.UI.ReadLine();
                 WriteVerbose($"Selection: {userSelection}");
 
-                if (string.IsNullOrWhiteSpace(userSelection) || userSelection.Equals("Q", StringComparison.CurrentCultureIgnoreCase))
+                if (string.IsNullOrWhiteSpace(userSelection))
+                {
+                    userSelection = DefaultOption;
+                    WriteVerbose($"Using default option: {userSelection}");
+                }
+                else
+                    WriteVerbose($"Selection: {userSelection}");
+
+                if (userSelection.Equals("Q", StringComparison.CurrentCultureIgnoreCase))
                 {
                     WriteVerbose("Exiting Menu");
                     WriteObject("quit");
@@ -219,12 +315,12 @@ namespace SS.CliMenu
 
                 menuSelected = Menu.MenuItems.Where(i => i.Option != null && i.Option.Equals(userSelection, StringComparison.CurrentCultureIgnoreCase)).SingleOrDefault();
                 visible = true;
-                if (menuSelected != null && menuSelected.VisibleAction != null)
+                if (menuSelected != null && menuSelected.VisibleScript != null)
                 {
                     Collection<PSObject> aOut = null;
                     try
                     {
-                        aOut = menuSelected.VisibleAction.InvokeWithContext(null, null, menuSelected.VisibleActionArgs);
+                        aOut = menuSelected.VisibleScript.InvokeWithContext(null, null, menuSelected.VisibleScriptArgs);
                     }
                     catch (RuntimeException ex)
                     {
@@ -233,7 +329,18 @@ namespace SS.CliMenu
                     if (aOut != null && aOut.Count > 0 && aOut[0].BaseObject is bool)
                         visible = (bool)aOut[0].BaseObject;
                     else
-                        WriteWarning($"Object returned from VisibleAction script is not a boolean value for menu item [{menuSelected.Name}], returned [{aOut}]");
+                        WriteWarning($"Object returned from VisibleScript script is not a boolean value for menu item [{menuSelected.Name}], returned [{aOut}]");
+                }
+                else if (menuSelected != null && menuSelected.VisibleFunc != null)
+                {
+                    try
+                    {
+                        visible = menuSelected.VisibleFunc(menuSelected, menuSelected.VisibleFuncArgs);
+                    }
+                    catch (RuntimeException ex)
+                    {
+                        WriteError(ex.ErrorRecord);
+                    }
                 }
                 if (!visible)
                 {
@@ -243,17 +350,17 @@ namespace SS.CliMenu
                 if (menuSelected != null)
                 {
                     WriteVerbose($"Menu: {menuSelected.Name}");
-                    if (menuSelected.ConfirmBeforeInvoke && !this.ShouldProcess(menuSelected.ConfirmTargetData, $"{menuSelected.Name}"))
+                    if (menuSelected.DisableConfirm.HasValue && !menuSelected.DisableConfirm.Value && !this.ShouldProcess(menuSelected.ConfirmTargetData, $"{menuSelected.Name}"))
                     {
                         WriteWarning("Execution aborted");
                     }
-                    else if (menuSelected.Action != null)
+                    else if (menuSelected.Script != null)
                     {
                         Host.UI.WriteLine(ConsoleColor.White, ConsoleColor.DarkBlue, $"Invoking [{menuSelected.Name}]");
                         Host.UI.Write($"Args: ");
-                        if (menuSelected.ActionArgs != null)
+                        if (menuSelected.ScriptArgs != null)
                         {
-                            foreach (var arg in menuSelected.ActionArgs)
+                            foreach (var arg in menuSelected.ScriptArgs)
                             {
                                 Host.UI.Write($"{arg} ");
                             }
@@ -261,15 +368,48 @@ namespace SS.CliMenu
                         Host.UI.WriteLine();
                         try
                         {
-                            var r_objs = menuSelected.Action.InvokeWithContext(null, null, menuSelected.ActionArgs);
+                            WriteVerbose("Calling Script");
+                            var r_objs = menuSelected.Script.InvokeWithContext(null, null, menuSelected.ScriptArgs);
                             foreach (var obj in r_objs)
                                 WriteObject(obj.BaseObject);
+                            WriteVerbose("Called Script");
                         }
                         catch (RuntimeException ex)
                         {
                             WriteError(ex.ErrorRecord);
                         }
                         Host.UI.WriteLine(ConsoleColor.White, ConsoleColor.DarkBlue, $"Invoke [{menuSelected.Name}] Completed!");
+                    }
+                    else if (menuSelected.Func != null)
+                    {
+                        Host.UI.WriteLine(ConsoleColor.White, ConsoleColor.DarkBlue, $"Invoking [{menuSelected.Name}]");
+                        Host.UI.Write($"Args: ");
+                        if (menuSelected.FuncArgs != null)
+                        {
+                            foreach (var arg in menuSelected.FuncArgs)
+                            {
+                                Host.UI.Write($"{arg} ");
+                            }
+                        }
+                        Host.UI.WriteLine();
+                        try
+                        {
+                            WriteVerbose("Calling Func");
+                            var r_objs = menuSelected.Func(menuSelected, menuSelected.FuncArgs ?? new object[0]);
+                            if (r_objs != null)
+                                foreach (var obj in r_objs)
+                                    WriteObject(obj);
+                            WriteVerbose("Called Func");
+                        }
+                        catch (RuntimeException ex)
+                        {
+                            WriteError(ex.ErrorRecord);
+                        }
+                        Host.UI.WriteLine(ConsoleColor.White, ConsoleColor.DarkBlue, $"Invoke [{menuSelected.Name}] Completed!");
+                    }
+                    else
+                    {
+                        WriteWarning($"No Script or Func to perform for [{menuSelected.Name}]");
                     }
                 }
                 else
@@ -279,6 +419,10 @@ namespace SS.CliMenu
                     Host.UI.ReadLine();
                 }
                 #endregion
+            }
+            catch (Exception ex)
+            {
+                WriteError(new ErrorRecord(ex, "5000", ErrorCategory.NotSpecified, this));
             }
             finally
             {

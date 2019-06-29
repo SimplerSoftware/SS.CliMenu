@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SS.CliMenu.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
@@ -27,6 +28,19 @@ namespace SS.CliMenu
             try
             {
                 Script.InvokeWithContext(null, null);
+            }
+            catch (RuntimeException ex)
+            {
+                WriteError(ex.ErrorRecord);
+            }
+            Host.UI.WriteLine(opts.MenuFillColor, Host.UI.RawUI.BackgroundColor, new string(opts.MenuFillChar, 1));
+        }
+        protected void WriteMenuLine(Action<CliMenuOptions> func, ConsoleColor Color = System.ConsoleColor.White, bool IsMenuItem = false)
+        {
+            Host.UI.Write(opts.MenuFillColor, Host.UI.RawUI.BackgroundColor, new string(opts.MenuFillChar, 1));
+            try
+            {
+                func(opts);
             }
             catch (RuntimeException ex)
             {

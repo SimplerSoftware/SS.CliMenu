@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SS.CliMenu.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
@@ -23,7 +24,7 @@ namespace SS.CliMenu
     {
         protected override void ProcessRecord()
         {
-            CliMenuOptions opts = GetVariableValue("CliMenuOptions", new CliMenuOptions(this.Host)) as CliMenuOptions;
+            CliMenuOptions opts = GetVariableValue("CliMenuOptions", new CliMenuOptions(this.Host.UI.RawUI.WindowSize.Width)) as CliMenuOptions;
             WriteObject(opts);
             base.ProcessRecord();
         }

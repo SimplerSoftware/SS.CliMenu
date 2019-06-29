@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SS.CliMenu.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
@@ -99,12 +100,19 @@ namespace SS.CliMenu
         /// <para type="description"></para>
         /// </summary>
         [Parameter]
-        public ScriptBlock HeaderAction { get; set; }
+        [Alias("HeaderAction")]
+        public ScriptBlock HeaderScript { get; set; }
+        /// <summary>
+        /// 
+        /// <para type="description"></para>
+        /// </summary>
+        [Parameter]
+        public Action<MenuObject, CliMenuOptions> HeaderFunc { get; set; }
 
         protected override void ProcessRecord()
         {
 
-            CliMenuOptions opts = GetVariableValue("CliMenuOptions", new CliMenuOptions(this.Host)) as CliMenuOptions;
+            CliMenuOptions opts = GetVariableValue("CliMenuOptions", new CliMenuOptions(this.Host.UI.RawUI.WindowSize.Width)) as CliMenuOptions;
             
             foreach (var key in MyInvocation.BoundParameters.Keys)
             {
@@ -146,18 +154,23 @@ namespace SS.CliMenu
                     case "maxwidth":
                         opts.MaxWidth = this.MaxWidth;
                         break;
+                    case "headerscript":
                     case "headeraction":
-                        opts.HeaderAction = this.HeaderAction;
+                        opts.HeaderScript = this.HeaderScript;
+                        break;
+                    case "headerfunc":
+                        opts.HeaderFunc = this.HeaderFunc;
                         break;
                     default:
-                        throw new ParameterBindingException($"Unknown parameter for options '{key}'");
+                        WriteVerbose($"Unknown parameter for options '{key}'");
+                        break;
                 }
             }
 
             if (string.IsNullOrWhiteSpace(opts.FooterText))
-                opts.FooterText = $"{DateTime.Now} - Running as {WindowsIdentity.GetCurrent().Name}";
+                opts.FooterText = $"{DateTime.Now} - Running as {Environment.UserName}";
 
-            this.SessionState.PSVariable.Set("CliMenuOptions", opts);
+            this.SessionState.PSVariable.Set(new PSVariable("CliMenuOptions", opts, ScopedItemOptions.AllScope));
             WriteObject(opts);
 
             base.ProcessRecord();

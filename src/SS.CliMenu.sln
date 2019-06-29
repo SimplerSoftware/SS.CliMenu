@@ -4,6 +4,10 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.29020.237
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Debugger", "Debugger\Debugger.csproj", "{75CE4D57-5257-4C6B-99C7-6F9091CDD2FE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BF0FC234-1B43-4D0A-93F2-2C364D1E5223} = {BF0FC234-1B43-4D0A-93F2-2C364D1E5223}
+		{061B05B8-80A9-4A2B-88E6-54BD15393B90} = {061B05B8-80A9-4A2B-88E6-54BD15393B90}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.CliMenu.Models", "SS.CliMenu.Models\SS.CliMenu.Models.csproj", "{061B05B8-80A9-4A2B-88E6-54BD15393B90}"
 EndProject
@@ -19,8 +23,8 @@ Global
 		{75CE4D57-5257-4C6B-99C7-6F9091CDD2FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{75CE4D57-5257-4C6B-99C7-6F9091CDD2FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{75CE4D57-5257-4C6B-99C7-6F9091CDD2FE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{061B05B8-80A9-4A2B-88E6-54BD15393B90}.Debug|Any CPU.ActiveCfg = Release|Any CPU
-		{061B05B8-80A9-4A2B-88E6-54BD15393B90}.Debug|Any CPU.Build.0 = Release|Any CPU
+		{061B05B8-80A9-4A2B-88E6-54BD15393B90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{061B05B8-80A9-4A2B-88E6-54BD15393B90}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{061B05B8-80A9-4A2B-88E6-54BD15393B90}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{061B05B8-80A9-4A2B-88E6-54BD15393B90}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BF0FC234-1B43-4D0A-93F2-2C364D1E5223}.Debug|Any CPU.ActiveCfg = Debug|Any CPU

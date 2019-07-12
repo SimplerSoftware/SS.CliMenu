@@ -13,6 +13,21 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.CliMenu.Models", "SS.Cli
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.CliMenu", "SS.CliMenu\SS.CliMenu.csproj", "{BF0FC234-1B43-4D0A-93F2-2C364D1E5223}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{986C55E8-A7C6-4368-AD61-1EEA09D7D55C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{D7FE0365-9E47-4E87-9EE5-D186A9E87EBF}"
+	ProjectSection(SolutionItems) = preProject
+		..\build\PublishToGallery.ps1 = ..\build\PublishToGallery.ps1
+		..\build\Update-ModuleManifest.ps1 = ..\build\Update-ModuleManifest.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{6419A5BD-29B1-4DF9-80E7-63FCD2B7538D}"
+	ProjectSection(SolutionItems) = preProject
+		..\LICENSE = ..\LICENSE
+		..\LICENSE.md = ..\LICENSE.md
+		..\README.md = ..\README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,6 +49,11 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{75CE4D57-5257-4C6B-99C7-6F9091CDD2FE} = {986C55E8-A7C6-4368-AD61-1EEA09D7D55C}
+		{061B05B8-80A9-4A2B-88E6-54BD15393B90} = {986C55E8-A7C6-4368-AD61-1EEA09D7D55C}
+		{BF0FC234-1B43-4D0A-93F2-2C364D1E5223} = {986C55E8-A7C6-4368-AD61-1EEA09D7D55C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {06E1A259-1785-4D46-A366-568E40A8AFE1}

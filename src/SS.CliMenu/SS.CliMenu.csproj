@@ -16,10 +16,31 @@ This is a major modified version of https://github.com/torgro/cliMenu with some 
     <PackageLicenseUrl>https://github.com/SimplerSoftware/SS.CliMenu/blob/master/LICENSE.md</PackageLicenseUrl>
     <PackageTags>Menu;Cli;Console</PackageTags>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <NuspecFile>package.nuspec</NuspecFile>
   </PropertyGroup>
 
+  <Target Name="SetNuspecProperties" BeforeTargets="GenerateNuspec" Condition="$(NuspecFile) != ''">
+    <PropertyGroup>
+      <NuspecBasePath>$(OutDir)</NuspecBasePath>
+      <NuspecProperties>$(NuspecProperties);id=$(PackageId)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);config=$(Configuration)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);version=$(PackageVersion)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);authors=$(Authors.Replace('&amp;', '&amp;amp;'))</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);description=$(Description.Replace('&amp;', '&amp;amp;'))</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);company=$(Company)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);projectUrl=$(PackageProjectUrl)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);iconUrl=$(PackageIconUrl)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);title=$(Product.Replace('&amp;', '&amp;amp;'))</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);copyright=$(Copyright)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);tags=$(PackageTags.Replace(';', ' '))</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);repositoryUrl=$(RepositoryUrl)</NuspecProperties>
+    </PropertyGroup>
+  </Target>
+
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="set module=&quot;$(TargetName)&quot;&#xD;&#xA;set &quot;Personal=&quot;&#xD;&#xA;set &quot;ModuleVersion=&quot;&#xD;&#xA;for /f &quot;delims=&quot; %25%25A in ('powershell -Command &quot;(Get-Content .\SS.CliMenu.psd1 -Raw | Invoke-Expression).ModuleVersion&quot;') do set &quot;ModuleVersion=%25%25~A&quot;&#xD;&#xA;for /f &quot;delims=&quot; %25%25A in ('powershell -Command &quot;[Environment]::GetFolderPath('MyDocuments') | Out-String&quot;') do set &quot;Personal=%25%25~A&quot;&#xD;&#xA;if not defined Personal exit /b 1&#xD;&#xA;echo ModuleVersion is %25ModuleVersion%25&#xD;&#xA;echo Coping to &quot;%25Personal%25\WindowsPowerShell\Modules\%25module%25\&quot;&#xD;&#xA;&#xD;&#xA;del /Q &quot;%25Personal%25\WindowsPowerShell\Modules\%25module%25\%25ModuleVersion%25\*.*&quot;&#xD;&#xA;xcopy /Y &quot;$(TargetDir)$(TargetFileName)&quot; &quot;%25Personal%25\WindowsPowerShell\Modules\%25module%25\%25ModuleVersion%25\bin\&quot;&#xD;&#xA;if $(ConfigurationName) == Debug xcopy /Y &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;%25Personal%25\WindowsPowerShell\Modules\%25module%25\%25ModuleVersion%25\bin\&quot;&#xD;&#xA;xcopy /Y &quot;$(TargetDir)SS.CliMenu.Models.dll&quot; &quot;%25Personal%25\WindowsPowerShell\Modules\%25module%25\%25ModuleVersion%25\bin\&quot;&#xD;&#xA;xcopy /Y &quot;$(TargetDir)*Help.xml&quot; &quot;%25Personal%25\WindowsPowerShell\Modules\%25module%25\%25ModuleVersion%25\bin\&quot;&#xD;&#xA;xcopy /Y &quot;$(TargetDir)*.psd1&quot; &quot;%25Personal%25\WindowsPowerShell\Modules\%25module%25\%25ModuleVersion%25\&quot;&#xD;&#xA;xcopy /Y &quot;$(TargetDir)*.txt&quot; &quot;%25Personal%25\WindowsPowerShell\Modules\%25module%25\%25ModuleVersion%25\&quot;&#xD;&#xA;" />
+    <!--<Exec Command="set module=&quot;$(TargetName)&quot;&#xD;&#xA;set &quot;Personal=&quot;&#xD;&#xA;set &quot;ModuleVersion=&quot;&#xD;&#xA;for /f &quot;delims=&quot; %25%25A in ('powershell -Command &quot;(Get-Content .\SS.CliMenu.psd1 -Raw | Invoke-Expression).ModuleVersion&quot;') do set &quot;ModuleVersion=%25%25~A&quot;&#xD;&#xA;for /f &quot;delims=&quot; %25%25A in ('powershell -Command &quot;[Environment]::GetFolderPath('MyDocuments') | Out-String&quot;') do set &quot;Personal=%25%25~A&quot;&#xD;&#xA;if not defined Personal exit /b 1&#xD;&#xA;echo ModuleVersion is %25ModuleVersion%25&#xD;&#xA;echo Coping to &quot;%25Personal%25\WindowsPowerShell\Modules\%25module%25\&quot;&#xD;&#xA;&#xD;&#xA;del /Q &quot;%25Personal%25\WindowsPowerShell\Modules\%25module%25\%25ModuleVersion%25\*.*&quot;&#xD;&#xA;xcopy /Y &quot;$(TargetDir)$(TargetFileName)&quot; &quot;%25Personal%25\WindowsPowerShell\Modules\%25module%25\%25ModuleVersion%25\bin\&quot;&#xD;&#xA;if $(ConfigurationName) == Debug xcopy /Y &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;%25Personal%25\WindowsPowerShell\Modules\%25module%25\%25ModuleVersion%25\bin\&quot;&#xD;&#xA;xcopy /Y &quot;$(TargetDir)SS.CliMenu.Models.dll&quot; &quot;%25Personal%25\WindowsPowerShell\Modules\%25module%25\%25ModuleVersion%25\bin\&quot;&#xD;&#xA;xcopy /Y &quot;$(TargetDir)*Help.xml&quot; &quot;%25Personal%25\WindowsPowerShell\Modules\%25module%25\%25ModuleVersion%25\bin\&quot;&#xD;&#xA;xcopy /Y &quot;$(TargetDir)*.psd1&quot; &quot;%25Personal%25\WindowsPowerShell\Modules\%25module%25\%25ModuleVersion%25\&quot;&#xD;&#xA;xcopy /Y &quot;$(TargetDir)*.txt&quot; &quot;%25Personal%25\WindowsPowerShell\Modules\%25module%25\%25ModuleVersion%25\&quot;&#xD;&#xA;" />-->
+    <Exec Command="mkdir &quot;$(TargetDir)bin\&quot;&#xD;&#xA;move &quot;$(TargetDir)*.dll&quot; &quot;$(TargetDir)bin\&quot;&#xD;&#xA;&#xD;&#xA;if defined APPVEYOR_BUILD_NUMBER exit&#xD;&#xA;for /f &quot;delims=&quot; %25%25A in ('powershell -Command &quot;$v = ..\..\build\Get-ModuleManifestVersion.ps1 -ManifestPath .\$(TargetName).psd1 -IncrementRev -AsPrerelease -PatchAsYYMM;$env:Version&quot;') do set &quot;PSModuleVersion=%25%25~A&quot;&#xD;&#xA;for /f &quot;delims=&quot; %25%25A in ('powershell -Command &quot;$v = ..\..\build\Get-ModuleManifestVersion.ps1 -ManifestPath .\$(TargetName).psd1 -IncrementRev -AsPrerelease -PatchAsYYMM;$env:Prerelease&quot;') do set &quot;Prerelease=%25%25~A&quot;&#xD;&#xA;powershell -Command &quot;..\..\build\Update-ModuleManifest.ps1 -Version (Get-Date -Format yyMM.1) -Branch 'ref' -Prerelease %25Prerelease%25 -ManifestPath '$(TargetDir)$(TargetName).psd1'&quot;&#xD;&#xA;&#xD;&#xA;set module=$(TargetName)&#xD;&#xA;if defined PSModuleVersion set module=%25module%25\%25PSModuleVersion%25&#xD;&#xA;set &quot;Personal=&quot;&#xD;&#xA;for /f &quot;delims=&quot; %25%25A in ('powershell -Command &quot;[Environment]::GetFolderPath('MyDocuments') | Out-String&quot;') do set &quot;Personal=%25%25~A&quot;&#xD;&#xA;if not defined Personal exit /b 1&#xD;&#xA;echo Coping to %25Personal%25\WindowsPowerShell\Modules\%25module%25\&#xD;&#xA;&#xD;&#xA;del /Q &quot;%25Personal%25\WindowsPowerShell\Modules\%25module%25\*.*&quot;&#xD;&#xA;xcopy  /Y /E &quot;$(TargetDir)*.psd1&quot; &quot;%25Personal%25\WindowsPowerShell\Modules\%25module%25\&quot;&#xD;&#xA;xcopy  /Y /E &quot;$(TargetDir)*.psm1&quot; &quot;%25Personal%25\WindowsPowerShell\Modules\%25module%25\&quot;&#xD;&#xA;xcopy  /Y /E &quot;$(TargetDir)*.txt&quot; &quot;%25Personal%25\WindowsPowerShell\Modules\%25module%25\&quot;&#xD;&#xA;xcopy  /Y /E &quot;$(TargetDir)*.docx&quot; &quot;%25Personal%25\WindowsPowerShell\Modules\%25module%25\&quot;&#xD;&#xA;xcopy  /Y /E &quot;$(TargetDir)*Help.xml&quot; &quot;%25Personal%25\WindowsPowerShell\Modules\%25module%25\&quot;&#xD;&#xA;xcopy  /Y /E &quot;$(TargetDir)bin\*.*&quot; &quot;%25Personal%25\WindowsPowerShell\Modules\%25module%25\bin\&quot;&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;" />
   </Target>
 
   <ItemGroup>
@@ -38,6 +59,9 @@ This is a major modified version of https://github.com/torgro/cliMenu with some 
 
   <ItemGroup>
     <None Update="LICENSE.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="package.nuspec">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="SS.CliMenu.psd1">

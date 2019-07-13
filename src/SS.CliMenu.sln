@@ -17,6 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{986C55E8-A7C
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{D7FE0365-9E47-4E87-9EE5-D186A9E87EBF}"
 	ProjectSection(SolutionItems) = preProject
+		..\build\Get-ModuleManifestVersion.ps1 = ..\build\Get-ModuleManifestVersion.ps1
 		..\build\PublishToGallery.ps1 = ..\build\PublishToGallery.ps1
 		..\build\Update-ModuleManifest.ps1 = ..\build\Update-ModuleManifest.ps1
 	EndProjectSection

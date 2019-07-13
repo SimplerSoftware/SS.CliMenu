@@ -18,6 +18,7 @@ This is a major modified version of https://github.com/torgro/cliMenu with some 
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <NuspecFile>package.nuspec</NuspecFile>
+    <PackageReleaseNotes></PackageReleaseNotes>
   </PropertyGroup>
 
   <Target Name="SetNuspecProperties" BeforeTargets="GenerateNuspec" Condition="$(NuspecFile) != ''">
@@ -28,8 +29,10 @@ This is a major modified version of https://github.com/torgro/cliMenu with some 
       <NuspecProperties>$(NuspecProperties);version=$(PackageVersion)</NuspecProperties>
       <NuspecProperties>$(NuspecProperties);authors=$(Authors.Replace('&amp;', '&amp;amp;'))</NuspecProperties>
       <NuspecProperties>$(NuspecProperties);description=$(Description.Replace('&amp;', '&amp;amp;'))</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);releaseNotes=$(PackageReleaseNotes.Replace('&amp;', '&amp;amp;'))</NuspecProperties>
       <NuspecProperties>$(NuspecProperties);company=$(Company)</NuspecProperties>
       <NuspecProperties>$(NuspecProperties);projectUrl=$(PackageProjectUrl)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);licenseUrl=$(PackageLicenseUrl)</NuspecProperties>
       <NuspecProperties>$(NuspecProperties);iconUrl=$(PackageIconUrl)</NuspecProperties>
       <NuspecProperties>$(NuspecProperties);title=$(Product.Replace('&amp;', '&amp;amp;'))</NuspecProperties>
       <NuspecProperties>$(NuspecProperties);copyright=$(Copyright)</NuspecProperties>

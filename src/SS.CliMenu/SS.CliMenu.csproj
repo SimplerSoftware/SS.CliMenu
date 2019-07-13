@@ -19,6 +19,7 @@ This is a major modified version of https://github.com/torgro/cliMenu with some 
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <NuspecFile>package.nuspec</NuspecFile>
     <PackageReleaseNotes></PackageReleaseNotes>
+    <PackageIconUrl>https://powershellgallery.com/Content/Images/Branding/packageDefaultIcon.svg</PackageIconUrl>
   </PropertyGroup>
 
   <Target Name="SetNuspecProperties" BeforeTargets="GenerateNuspec" Condition="$(NuspecFile) != ''">

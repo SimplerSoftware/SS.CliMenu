@@ -25,7 +25,7 @@ if ($ModuleManifest -match "(ModuleVersion\s*=)\s*'(.*)'"){
 		$PSModuleVersion = $Version
 	}
 }
-if (!$Prerelease -and $Branch -inotlike 'refs/heads/release*'){
+if (!$Prerelease -and $Branch -inotlike 'release*'){
 	$Prerelease = "preview$rev"
 	$PSModuleVersion += "-$Prerelease"
 }

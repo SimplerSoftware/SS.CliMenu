@@ -13,8 +13,11 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <AssemblyVersion>1.0.1906.29</AssemblyVersion>
     <FileVersion>1.0.1906.29</FileVersion>
-    <NuGetPublishLocation>D:\References\Packages</NuGetPublishLocation>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+     <NuGetPublishLocation>D:\References\Packages</NuGetPublishLocation>
   </PropertyGroup>
 
   <ItemGroup>

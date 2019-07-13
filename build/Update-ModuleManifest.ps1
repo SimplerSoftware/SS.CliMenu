@@ -8,6 +8,11 @@ param(
 	$ManifestPath,
 	$Prerelease = $null
 )
+Write-Verbose "Version: $Version"
+Write-Verbose "Branch: $Branch"
+Write-Verbose "ManifestPath: $ManifestPath"
+Write-Verbose "Prerelease: $Prerelease"
+
 $ModuleManifest = Get-Content $ManifestPath -Raw
 $rev = $null
 if ($ModuleManifest -match "(ModuleVersion\s*=)\s*'(.*)'"){

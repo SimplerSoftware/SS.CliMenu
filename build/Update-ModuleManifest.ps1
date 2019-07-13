@@ -37,4 +37,4 @@ if ($Prerelease){
 	$ModuleManifest = $ModuleManifest -replace "(?:#\s*)?(Prerelease\s*=)\s*'(.*)'", "`$1 '$Prerelease'"
 }
 $ModuleManifest = $ModuleManifest -replace "[\s\t\r\n]*$", "" # Fix extra lines at EOF
-#$ModuleManifest | Out-File -LiteralPath $ManifestPath
+$ModuleManifest | Out-File -LiteralPath $ManifestPath

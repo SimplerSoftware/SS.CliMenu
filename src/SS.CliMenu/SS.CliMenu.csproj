@@ -3,12 +3,12 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>SS.CliMenu</AssemblyName>
-    <AssemblyVersion>1.0.1906.95</AssemblyVersion>
-    <FileVersion>1.0.1906.95</FileVersion>
+    <AssemblyVersion>1.0.1908.95</AssemblyVersion>
+    <FileVersion>1.0.1908.95</FileVersion>
     <Product>SS.CliMenu</Product>
     <Company>Simpler Software</Company>
     <Copyright>(c) 2019 Simpler Software. All rights reserved.</Copyright>
-    <Version>1.0.1906.96</Version>
+    <Version>1.0.1908</Version>
     <Authors>John W Carew</Authors>
     <Description>CLI menu infrastructure for PowerShell.
 This is a major modified version of https://github.com/torgro/cliMenu with some advanced features.</Description>

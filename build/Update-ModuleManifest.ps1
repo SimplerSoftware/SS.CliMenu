@@ -9,6 +9,12 @@ param(
 	[string] $Prerelease = $null,
 	[string] $ReleaseBranch = 'refs/heads/release'
 )
+Write-Verbose "Version: $Version"
+Write-Verbose "Branch: $Branch"
+Write-Verbose "ManifestPath: $ManifestPath"
+Write-Verbose "Prerelease: $Prerelease"
+Write-Verbose "ReleaseBranch: $ReleaseBranch"
+
 $ModuleManifest = Get-Content $ManifestPath -Raw
 $Env:Rev = $null
 $Env:Version = $null

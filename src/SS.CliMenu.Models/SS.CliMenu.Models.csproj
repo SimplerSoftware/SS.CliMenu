@@ -7,13 +7,14 @@
     <Company>Simpler Software</Company>
     <Description>Shared models for SS.CliMenu, allowing to use strongly typed class in your menus.</Description>
     <Copyright>(c) 2019 Simpler Software. All rights reserved.</Copyright>
-    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <PackageLicenseFile></PackageLicenseFile>
     <PackageProjectUrl>https://github.com/SimplerSoftware/SS.CliMenu</PackageProjectUrl>
     <PackageTags>Menu;Cli;Console</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <AssemblyVersion>1.0.1906.29</AssemblyVersion>
     <FileVersion>1.0.1906.29</FileVersion>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -21,19 +22,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="LICENSE.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="PowerShellStandard.Library" Version="5.1.0">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
     <PackageReference Include="SS.NuGet.Publish" Version="1.0.1907.15" />
 
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="LICENSE.txt">
-      <PackagePath>LICENSE.txt</PackagePath>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <Pack>true</Pack>
-    </None>
   </ItemGroup>
 
 </Project>

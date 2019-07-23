@@ -6,7 +6,7 @@
     <title>$title$</title>
     <authors>$authors$</authors>
     <owners>$company$</owners>
-    <license type="file">$licenseFile$</license>
+    <license type="expression">$license$</license>
     <projectUrl>$projectUrl$</projectUrl>
     <iconUrl>$iconUrl$</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>

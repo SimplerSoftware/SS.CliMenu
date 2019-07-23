@@ -23,12 +23,23 @@ if ($ModuleManifest -match "(ModuleVersion\s*=)\s*'(.*)'"){
 	if ($Matches[2] -match "(?<Major>0|(?:[1-9]\d*))(?:\.(?<Minor>0|(?:[1-9]\d*))(?:\.(?<Patch>0|(?:[1-9]\d*)))?(?:\-(?<PreRelease>[0-9A-Z\.-]+))?(?:\+(?<Meta>[0-9A-Z\.-]+))?)?"){
 		Write-Verbose "SymVer matched [$($Matches[0])]"
 		$aVersion = $Version -split "\." | select -Last 2
+		$Patch = $aVersion[0]
 		$Env:Rev = $aVersion[1]
-		$Env:Version = "$($Matches.Major).$($Matches.Minor).$($aVersion[0])"
+		if ($Matches.Patch -gt $Patch){
+			Write-Verbose "Future release found [$($Matches.Patch)], setting as preview release."
+			# If patch # in manifest is manually set to a future YYMM(greater than what is past in at build time)
+			# Then, keep existing manifest patch #, and apply this as a preview release
+			$Patch = $Matches.Patch
+			$Prerelease = "preview$Env:Rev"
+		}
+		$Env:Version = "$($Matches.Major).$($Matches.Minor).$Patch"
 		$env:PSModuleVersion = $Env:Version
 	}
 }
-if (!$Prerelease -and $Branch -inotlike "$ReleaseBranch*"){
+if ($Prerelease){
+	$Env:Prerelease = $Prerelease
+	$env:PSModuleVersion += "-$Env:Prerelease"
+} elseif (!$Prerelease -and $Branch -inotlike "$ReleaseBranch*"){
 	$Env:Prerelease = "preview$Env:Rev"
 	$env:PSModuleVersion += "-$Env:Prerelease"
 }

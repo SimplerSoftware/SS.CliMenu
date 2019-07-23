@@ -30,6 +30,12 @@ if ($ModuleManifest -match "(ModuleVersion\s*=)\s*'(.*)'"){
 			Write-Host "Future release found [$($Matches.Patch)], setting as preview release."
 			# If patch # in manifest is manually set to a future YYMM(greater than what is past in at build time)
 			# Then, keep existing manifest patch #, and apply this as a preview release
+			if ($env:APPVEYOR){
+				# If we're in AppVeyor, update the build version
+				$newVersion = ($Version -replace "$Patch", "$($Matches.Patch)")
+				Write-Verbose "Updating appveyor build to [$newVersion]"
+				Update-AppveyorBuild -Version $newVersion
+			}
 			$Patch = $Matches.Patch
 			$Prerelease = "preview$Env:Rev"
 		}
@@ -56,11 +62,6 @@ if ($Env:Prerelease){
 }
 $ModuleManifest = $ModuleManifest -replace "[\s\t\r\n]*$", "" # Fix extra lines at EOF
 $ModuleManifest | Out-File -LiteralPath $ManifestPath
-if ($env:APPVEYOR){
-	# If we're in AppVeyor, update the build version
-	Write-Verbose "Updating appveyor build to [$env:PSModuleVersion]"
-	Update-AppveyorBuild -Version $env:PSModuleVersion
-}
 #Write-Host "##vso[build.updatebuildnumber]$env:PSModuleVersion"
 Write-Host "##vso[task.setvariable variable=Version]$env:Version"
 Write-Host "##vso[task.setvariable variable=Rev]$env:Rev"

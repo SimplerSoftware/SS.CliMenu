@@ -41,12 +41,18 @@ namespace SS.CliMenu
         [Parameter()]
         public string Description { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         protected override void BeginProcessing()
         {
             WriteVerbose($"{MyInvocation.InvocationName} - START");
             base.BeginProcessing();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         protected override void ProcessRecord()
         {
             WriteVerbose($"Creating menu [{Name}]");
@@ -62,6 +68,9 @@ namespace SS.CliMenu
 
             base.ProcessRecord();
         }
+        /// <summary>
+        /// 
+        /// </summary>
         protected override void EndProcessing()
         {
             WriteVerbose($"{MyInvocation.InvocationName} - END");

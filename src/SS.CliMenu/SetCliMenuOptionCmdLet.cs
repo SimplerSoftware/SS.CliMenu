@@ -109,6 +109,9 @@ namespace SS.CliMenu
         [Parameter]
         public Action<MenuObject, CliMenuOptions> HeaderFunc { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         protected override void ProcessRecord()
         {
 

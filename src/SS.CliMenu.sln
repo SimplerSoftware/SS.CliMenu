@@ -24,7 +24,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{D7FE0365
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{6419A5BD-29B1-4DF9-80E7-63FCD2B7538D}"
 	ProjectSection(SolutionItems) = preProject
-		..\LICENSE = ..\LICENSE
 		..\LICENSE.md = ..\LICENSE.md
 		..\README.md = ..\README.md
 	EndProjectSection

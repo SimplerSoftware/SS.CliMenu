@@ -58,12 +58,18 @@ namespace SS.CliMenu
         [Parameter]
         public Action<MenuObject, CliMenuOptions> HeaderFunc { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         protected override void BeginProcessing()
         {
             WriteVerbose($"{MyInvocation.InvocationName} - START");
             base.BeginProcessing();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         protected override void ProcessRecord()
         {
             try
@@ -430,6 +436,9 @@ namespace SS.CliMenu
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         protected override void EndProcessing()
         {
             WriteVerbose($"{MyInvocation.InvocationName} - END");

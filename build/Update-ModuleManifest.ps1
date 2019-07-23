@@ -9,6 +9,7 @@ param(
 	[string] $Prerelease = $null,
 	[string] $ReleaseBranch = 'refs/heads/release'
 )
+Write-Verbose "AppVeyor: $env:APPVEYOR"
 Write-Verbose "Version: $Version"
 Write-Verbose "Branch: $Branch"
 Write-Verbose "ManifestPath: $ManifestPath"
@@ -26,9 +27,15 @@ if ($ModuleManifest -match "(ModuleVersion\s*=)\s*'(.*)'"){
 		$Patch = $aVersion[0]
 		$Env:Rev = $aVersion[1]
 		if ($Matches.Patch -gt $Patch){
-			Write-Verbose "Future release found [$($Matches.Patch)], setting as preview release."
+			Write-Host "Future release found [$($Matches.Patch)], setting as preview release."
 			# If patch # in manifest is manually set to a future YYMM(greater than what is past in at build time)
 			# Then, keep existing manifest patch #, and apply this as a preview release
+			if ($env:APPVEYOR){
+				# If we're in AppVeyor, update the build version
+				$newVersion = ($Version -replace "$Patch", "$($Matches.Patch)")
+				Write-Verbose "Updating appveyor build to [$newVersion]"
+				Update-AppveyorBuild -Version $newVersion
+			}
 			$Patch = $Matches.Patch
 			$Prerelease = "preview$Env:Rev"
 		}

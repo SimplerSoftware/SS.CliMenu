@@ -9,6 +9,7 @@ param(
 	[string] $Prerelease = $null,
 	[string] $ReleaseBranch = 'refs/heads/release'
 )
+Write-Verbose "AppVeyor: $env:APPVEYOR"
 Write-Verbose "Version: $Version"
 Write-Verbose "Branch: $Branch"
 Write-Verbose "ManifestPath: $ManifestPath"
@@ -33,7 +34,9 @@ if ($ModuleManifest -match "(ModuleVersion\s*=)\s*'(.*)'"){
 			$Prerelease = "preview$Env:Rev"
 			if ($env:APPVEYOR){
 				# If we're in AppVeyor, update the build version
-				Update-AppveyorBuild -Version ($Version -replace "$Patch", "$($Matches.Patch)")
+				$newVersion = ($Version -replace "$Patch", "$($Matches.Patch)")
+				Write-Verbose "Updating appveyor build to [$newVersion]"
+				Update-AppveyorBuild -Version $newVersion
 			}
 		}
 		$Env:Version = "$($Matches.Major).$($Matches.Minor).$Patch"

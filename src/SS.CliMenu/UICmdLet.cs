@@ -54,14 +54,16 @@ namespace SS.CliMenu
             string textLine;
             if (IsMenuItem)
             {
-                var sizeLine = Text.Length + 2;
-                if (sizeLine > opts.MaxWidth) {
+                var sizeLine = Text.Length + 2; // Two space prefix added below
+                if (sizeLine > (opts.MaxWidth - 2))
+                {
                     Text = Text.Substring(0, opts.MaxWidth - 7);
                     Text += "...";
                 }
 
                 textLine = $"  {Text}";
-                if (textLine.Length < opts.MaxWidth) {
+                if (textLine.Length < (opts.MaxWidth - 2))
+                {
                     textLine += new string(' ', ((opts.MaxWidth - 1) - textLine.Length - 1));
                 }
             }

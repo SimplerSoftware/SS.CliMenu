@@ -35,7 +35,7 @@ if ($ModuleManifest -match "(ModuleVersion\s*=)\s*'(.*)'"){
 			$Prerelease = $Matches.PreRelease
 			$Meta = $Matches.Meta
 		}
-		if ($IncrementRev -and $Prerelease -match "(?<Name>[0-9A-Z\.-]+)(?<Rev>\d+)$"){
+		if ($IncrementRev -and $Prerelease -match "(?<Name>[A-Z\.-]+)(?<Rev>\d+)$"){
 			Write-Verbose "Revision matched: [$($Matches[0])]"
 			$Name = $Matches.Name
 			$rev = Invoke-Expression $Matches.Rev
@@ -57,4 +57,11 @@ if ($Meta){
 	$env:Prerelease = "+$Meta"
 }
 $env:PSModuleVersion = $PSModuleVersion
-Write-Verbose "PSModuleVersion: $PSModuleVersionOrig$PrereleaseOrig -> $PSModuleVersion"
+if ("$PSModuleVersionOrig$PrereleaseOrig" -ne "$PSModuleVersion"){
+	Write-Verbose "PSModuleVersion: $PSModuleVersionOrig$PrereleaseOrig -> $PSModuleVersion"
+}
+# For Azure Pipelines
+Write-Output "##vso[task.setvariable variable=PSModuleVersion]$PSModuleVersion"
+Write-Output "##vso[task.setvariable variable=Version]$env:Version"
+Write-Output "##vso[task.setvariable variable=Prerelease]$env:Prerelease"
+Write-Output "##vso[task.setvariable variable=Rev]$env:Rev"

@@ -26,11 +26,15 @@ if ($ModuleManifest -match "(ModuleVersion\s*=)\s*'(.*)'"){
 		$Patch = $aVersion[0]
 		$Env:Rev = $aVersion[1]
 		if ($Matches.Patch -gt $Patch){
-			Write-Verbose "Future release found [$($Matches.Patch)], setting as preview release."
+			Write-Host "Future release found [$($Matches.Patch)], setting as preview release."
 			# If patch # in manifest is manually set to a future YYMM(greater than what is past in at build time)
 			# Then, keep existing manifest patch #, and apply this as a preview release
 			$Patch = $Matches.Patch
 			$Prerelease = "preview$Env:Rev"
+			if ($env:APPVEYOR){
+				# If we're in AppVeyor, update the build version
+				Update-AppveyorBuild -Version ($Version -replace "$Patch", "$($Matches.Patch)")
+			}
 		}
 		$Env:Version = "$($Matches.Major).$($Matches.Minor).$Patch"
 		$env:PSModuleVersion = $Env:Version

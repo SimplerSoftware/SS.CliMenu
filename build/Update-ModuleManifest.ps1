@@ -35,7 +35,7 @@ if ($ModuleManifest -match "(ModuleVersion\s*=)\s*'(.*)'"){
 			if ($env:APPVEYOR){
 				# If we're in AppVeyor, update the build version
 				$newVersion = ($Version -replace "$Patch", "$($Matches.Patch)")
-				Write-Verbose "Updating appveyor build to [$newVersion]"
+				Write-Verbose "Updating appveyor build to [$newVersion] [$Patch] -> [$($Matches.Patch)]"
 				Update-AppveyorBuild -Version $newVersion
 			}
 		}

@@ -5,6 +5,7 @@
     <AssemblyName>SS.CliMenu</AssemblyName>
     <AssemblyVersion>1.0.1908.95</AssemblyVersion>
     <FileVersion>1.0.1908.95</FileVersion>
+    <InformationalVersion>commit-id</InformationalVersion>
     <Product>SS.CliMenu</Product>
     <Company>Simpler Software</Company>
     <Copyright>(c) 2019 Simpler Software. All rights reserved.</Copyright>

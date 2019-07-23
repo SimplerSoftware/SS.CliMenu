@@ -137,13 +137,17 @@ namespace SS.CliMenu
         [Parameter(ParameterSetName = "MenuItem")]
         public SwitchParameter Default { get; set; }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
         protected override void BeginProcessing()
         {
             WriteVerbose($"{MyInvocation.InvocationName} - START");
             base.BeginProcessing();
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
         protected override void ProcessRecord()
         {
             Regex rxOption = new Regex("^\\d+$");
@@ -195,7 +199,9 @@ namespace SS.CliMenu
 
             base.ProcessRecord();
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
         protected override void EndProcessing()
         {
             WriteVerbose($"{MyInvocation.InvocationName} - END");

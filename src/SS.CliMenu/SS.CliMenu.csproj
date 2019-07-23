@@ -14,7 +14,7 @@
     <Description>CLI menu infrastructure for PowerShell.
 This is a major modified version of https://github.com/torgro/cliMenu with some advanced features.</Description>
     <PackageProjectUrl>https://github.com/SimplerSoftware/SS.CliMenu</PackageProjectUrl>
-    <PackageLicenseUrl>https://github.com/SimplerSoftware/SS.CliMenu/blob/master/LICENSE.md</PackageLicenseUrl>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <PackageTags>Menu;Cli;Console</PackageTags>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -34,7 +34,7 @@ This is a major modified version of https://github.com/torgro/cliMenu with some 
       <NuspecProperties>$(NuspecProperties);releaseNotes=$(PackageReleaseNotes.Replace('&amp;', '&amp;amp;'))</NuspecProperties>
       <NuspecProperties>$(NuspecProperties);company=$(Company)</NuspecProperties>
       <NuspecProperties>$(NuspecProperties);projectUrl=$(PackageProjectUrl)</NuspecProperties>
-      <NuspecProperties>$(NuspecProperties);licenseUrl=$(PackageLicenseUrl)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);licenseFile=$(PackageLicenseFile)</NuspecProperties>
       <NuspecProperties>$(NuspecProperties);iconUrl=$(PackageIconUrl)</NuspecProperties>
       <NuspecProperties>$(NuspecProperties);title=$(Product.Replace('&amp;', '&amp;amp;'))</NuspecProperties>
       <NuspecProperties>$(NuspecProperties);copyright=$(Copyright)</NuspecProperties>
@@ -63,7 +63,7 @@ This is a major modified version of https://github.com/torgro/cliMenu with some 
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="LICENSE.txt">
+    <None Update="LICENSE.txt" Pack="true" PackagePath="LICENSE.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="package.nuspec">

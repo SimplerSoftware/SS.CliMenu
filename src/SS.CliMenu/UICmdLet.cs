@@ -8,11 +8,14 @@ using System.Threading.Tasks;
 
 namespace SS.CliMenu
 {
+    /// <summary>
+    /// Base abstract Cmdlet with helper functions for UI
+    /// </summary>
     public abstract class UICmdLet : PSCmdlet
     {
-        protected CliMenuOptions opts;
+        internal CliMenuOptions opts;
 
-        protected void WriteMenuLine(string Text, ConsoleColor Color = System.ConsoleColor.White, bool IsMenuItem = false)
+        internal void WriteMenuLine(string Text, ConsoleColor Color = System.ConsoleColor.White, bool IsMenuItem = false)
         {
             if (string.IsNullOrEmpty(Text))
                 return;
@@ -22,7 +25,7 @@ namespace SS.CliMenu
             Host.UI.Write(Color, Host.UI.RawUI.BackgroundColor, text);
             Host.UI.WriteLine(opts.MenuFillColor, Host.UI.RawUI.BackgroundColor, new string(opts.MenuFillChar, 1));
         }
-        protected void WriteMenuLine(ScriptBlock Script, ConsoleColor Color = System.ConsoleColor.White, bool IsMenuItem = false)
+        internal void WriteMenuLine(ScriptBlock Script, ConsoleColor Color = System.ConsoleColor.White, bool IsMenuItem = false)
         {
             Host.UI.Write(opts.MenuFillColor, Host.UI.RawUI.BackgroundColor, new string(opts.MenuFillChar, 1));
             try
@@ -35,7 +38,7 @@ namespace SS.CliMenu
             }
             Host.UI.WriteLine(opts.MenuFillColor, Host.UI.RawUI.BackgroundColor, new string(opts.MenuFillChar, 1));
         }
-        protected void WriteMenuLine(Action<CliMenuOptions> func, ConsoleColor Color = System.ConsoleColor.White, bool IsMenuItem = false)
+        internal void WriteMenuLine(Action<CliMenuOptions> func, ConsoleColor Color = System.ConsoleColor.White, bool IsMenuItem = false)
         {
             Host.UI.Write(opts.MenuFillColor, Host.UI.RawUI.BackgroundColor, new string(opts.MenuFillChar, 1));
             try
@@ -49,7 +52,7 @@ namespace SS.CliMenu
             Host.UI.WriteLine(opts.MenuFillColor, Host.UI.RawUI.BackgroundColor, new string(opts.MenuFillChar, 1));
         }
 
-        protected string SpaceMenuLine(string Text, bool IsMenuItem)
+        internal string SpaceMenuLine(string Text, bool IsMenuItem)
         {
             string textLine;
             if (IsMenuItem)

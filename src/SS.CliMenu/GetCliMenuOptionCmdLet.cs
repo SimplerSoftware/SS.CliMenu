@@ -22,6 +22,9 @@ namespace SS.CliMenu
     [OutputType(typeof(CliMenuOptions))]
     public class GetCliMenuOptionCmdLet : PSCmdlet
     {
+        /// <summary>
+        /// 
+        /// </summary>
         protected override void ProcessRecord()
         {
             CliMenuOptions opts = GetVariableValue("CliMenuOptions", new CliMenuOptions(this.Host.UI.RawUI.WindowSize.Width)) as CliMenuOptions;

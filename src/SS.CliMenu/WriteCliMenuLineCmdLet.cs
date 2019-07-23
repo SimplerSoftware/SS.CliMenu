@@ -57,6 +57,9 @@ namespace SS.CliMenu
         [Parameter]
         public SwitchParameter IsMenuItem { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         protected override void ProcessRecord()
         {
             opts = GetVariableValue("CliMenuOptions", new CliMenuOptions(this.Host.UI.RawUI.WindowSize.Width)) as CliMenuOptions;

@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace SS.CliMenu.Models
 {
+    /// <summary>
+    /// Model to store a menu's item.
+    /// </summary>
     public class MenuItemObject
     {
         /// <summary>

@@ -136,6 +136,12 @@ namespace SS.CliMenu
         /// </summary>
         [Parameter(ParameterSetName = "MenuItem")]
         public SwitchParameter Default { get; set; }
+        /// <summary>
+        /// The zero-based index at which the menu item should be inserted.
+        /// <para type="description">The zero-based index at which the menu item should be inserted.</para>
+        /// </summary>
+        [Parameter()]
+        public int? InsertAt { get; set; } = null;
 
         /// <summary>
         /// 
@@ -193,7 +199,10 @@ namespace SS.CliMenu
                 Default = this.Default
             };
 
-            this.MenuObject.MenuItems.Add(menuItem);
+            if (InsertAt.HasValue)
+                this.MenuObject.MenuItems.Insert(InsertAt.Value, menuItem);
+            else
+                this.MenuObject.MenuItems.Add(menuItem);
 
             WriteObject(this.MenuObject);
 

@@ -114,6 +114,8 @@ namespace SS.CliMenu.Metrics
                     {
                         var config = TelemetryConfiguration.CreateDefault();
                         config.InstrumentationKey = this.InstrumentationKey;
+                        //TODO: Look into adding ITelemetryInitializer for static data between all logging
+                        // https://docs.microsoft.com/en-us/azure/azure-monitor/app/usage-overview
                         _metricHelper.AddTelemetryClient(new TelemetryClient(config));
                     }
                 }

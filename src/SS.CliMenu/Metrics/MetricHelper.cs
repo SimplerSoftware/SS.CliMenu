@@ -218,28 +218,24 @@ namespace SS.CliMenu.Metrics
                     PopulatePropertiesFromQos(qos, pageViewTelemetry.Properties);
 
                     #region User-Agent work around
-                    Microsoft.ApplicationInsights.Channel.Transmission trans = new Microsoft.ApplicationInsights.Channel.Transmission(new Uri("http://www.contoso.com/"), new byte[0], "", "");
-                    Type type = typeof(Microsoft.ApplicationInsights.Channel.Transmission);
-                    System.Reflection.FieldInfo info = type.GetField("client", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
-                    System.Net.Http.HttpClient value = info.GetValue(null) as System.Net.Http.HttpClient;
-                    if (!value.DefaultRequestHeaders.UserAgent.Contains(qos.UserAgent))
+                    try
                     {
-                        value.DefaultRequestHeaders.UserAgent.Clear();
-                        value.DefaultRequestHeaders.UserAgent.Add(qos.UserAgent);
+                        // Browser is only read from User-Agent header, will create issue with MS on Github. Should also be using Context.User.UserAgent
+                        // https://github.com/microsoft/ApplicationInsights-Announcements/issues/3
+                        Microsoft.ApplicationInsights.Channel.Transmission trans = new Microsoft.ApplicationInsights.Channel.Transmission(new Uri("http://www.contoso.com/"), new byte[0], "", "");
+                        Type type = typeof(Microsoft.ApplicationInsights.Channel.Transmission);
+                        System.Reflection.FieldInfo info = type.GetField("client", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+                        System.Net.Http.HttpClient value = info.GetValue(null) as System.Net.Http.HttpClient;
+                        if (!value.DefaultRequestHeaders.UserAgent.Contains(qos.UserAgent))
+                        {
+                            value.DefaultRequestHeaders.UserAgent.Clear();
+                            value.DefaultRequestHeaders.UserAgent.Add(qos.UserAgent);
+                        }
                     }
+                    catch { }
                     #endregion
 
                     client.TrackPageView(pageViewTelemetry);
-                    //var perf = new PageViewPerformanceTelemetry(qos.Name)
-                    //{
-                    //    Id = qos.Id,
-                    //    DomProcessing = qos.ProcessingTime,
-                    //    PerfTotal = qos.ProcessingTime,
-                    //    Timestamp = qos.StartTime,
-                    //};
-                    //LoadTelemetryClientContext(qos, perf.Context);
-                    //PopulatePropertiesFromQos(qos, perf.Properties);
-                    //client.Track(perf);
                 }
             }
         }
@@ -261,15 +257,21 @@ namespace SS.CliMenu.Metrics
                     PopulatePropertiesFromQos(qos, perf.Properties);
 
                     #region User-Agent work around
-                    Microsoft.ApplicationInsights.Channel.Transmission trans = new Microsoft.ApplicationInsights.Channel.Transmission(new Uri("http://www.contoso.com/"), new byte[0], "", "");
-                    Type type = typeof(Microsoft.ApplicationInsights.Channel.Transmission);
-                    System.Reflection.FieldInfo info = type.GetField("client", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
-                    System.Net.Http.HttpClient value = info.GetValue(null) as System.Net.Http.HttpClient;
-                    if (!value.DefaultRequestHeaders.UserAgent.Contains(qos.UserAgent))
+                    try
                     {
-                        value.DefaultRequestHeaders.UserAgent.Clear();
-                        value.DefaultRequestHeaders.UserAgent.Add(qos.UserAgent);
+                        // Browser is only read from User-Agent header, will create issue with MS on Github. Should also be using Context.User.UserAgent
+                        // https://github.com/microsoft/ApplicationInsights-Announcements/issues/3
+                        Microsoft.ApplicationInsights.Channel.Transmission trans = new Microsoft.ApplicationInsights.Channel.Transmission(new Uri("http://www.contoso.com/"), new byte[0], "", "");
+                        Type type = typeof(Microsoft.ApplicationInsights.Channel.Transmission);
+                        System.Reflection.FieldInfo info = type.GetField("client", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+                        System.Net.Http.HttpClient value = info.GetValue(null) as System.Net.Http.HttpClient;
+                        if (!value.DefaultRequestHeaders.UserAgent.Contains(qos.UserAgent))
+                        {
+                            value.DefaultRequestHeaders.UserAgent.Clear();
+                            value.DefaultRequestHeaders.UserAgent.Add(qos.UserAgent);
+                        }
                     }
+                    catch { }
                     #endregion
 
                     client.Track(perf);

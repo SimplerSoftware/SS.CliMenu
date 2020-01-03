@@ -57,13 +57,24 @@ namespace SS.CliMenu
         [Parameter]
         public SwitchParameter IsMenuItem { get; set; }
 
+        protected override string DataCollectionWarning => string.Empty;
+
+        protected override string InstrumentationKey => string.Empty;
+
+        protected override void InitializeQosEvent()
+        {
+            
+        }
+
+        protected override bool IsUsageMetricEnabled => false;
+        protected override bool IsErrorMetricEnabled => false;
+        protected override string ProductName => ".Default";
+
         /// <summary>
         /// 
         /// </summary>
-        protected override void ProcessRecord()
+        public override void ExecuteCmdlet()
         {
-            opts = GetVariableValue("CliMenuOptions", new CliMenuOptions(this.Host.UI.RawUI.WindowSize.Width)) as CliMenuOptions;
-
             if (Script != null)
                 base.WriteMenuLine(Script, Color, IsMenuItem);
             if (Func != null)
@@ -71,7 +82,7 @@ namespace SS.CliMenu
             else
                 base.WriteMenuLine(Text, Color, IsMenuItem);
 
-            base.ProcessRecord();
+            base.ExecuteCmdlet();
         }
     }
 }

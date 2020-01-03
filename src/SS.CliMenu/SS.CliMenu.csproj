@@ -3,13 +3,13 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>SS.CliMenu</AssemblyName>
-    <AssemblyVersion>1.0.1908.95</AssemblyVersion>
-    <FileVersion>1.0.1908.95</FileVersion>
+    <AssemblyVersion>1.0.2001.97</AssemblyVersion>
+    <FileVersion>1.0.2001.97</FileVersion>
     <InformationalVersion>commit-id</InformationalVersion>
     <Product>SS.CliMenu</Product>
     <Company>Simpler Software</Company>
     <Copyright>(c) 2019 Simpler Software. All rights reserved.</Copyright>
-    <Version>1.0.1908</Version>
+    <Version>1.0.2001</Version>
     <Authors>John W Carew</Authors>
     <Description>CLI menu infrastructure for PowerShell.
 This is a major modified version of https://github.com/torgro/cliMenu with some advanced features.</Description>
@@ -54,10 +54,16 @@ This is a major modified version of https://github.com/torgro/cliMenu with some 
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.ApplicationInsights" Version="2.12.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="PowerShellStandard.Library" Version="5.1.0">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="XmlDoc2CmdletDoc" Version="0.2.12">
+    <PackageReference Include="XmlDoc2CmdletDoc" Version="0.2.13">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
@@ -65,6 +71,21 @@ This is a major modified version of https://github.com/torgro/cliMenu with some 
 
   <ItemGroup>
     <ProjectReference Include="..\SS.CliMenu.Models\SS.CliMenu.Models.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>

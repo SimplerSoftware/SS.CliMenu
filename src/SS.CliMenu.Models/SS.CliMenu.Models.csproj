@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>1.0.1906.29</Version>
+    <Version>1.0.2001</Version>
     <Authors>John W Carew</Authors>
     <Company>Simpler Software</Company>
     <Description>Shared models for SS.CliMenu, allowing to use strongly typed class in your menus.</Description>
@@ -11,8 +11,8 @@
     <PackageProjectUrl>https://github.com/SimplerSoftware/SS.CliMenu</PackageProjectUrl>
     <PackageTags>Menu;Cli;Console</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <AssemblyVersion>1.0.1906.29</AssemblyVersion>
-    <FileVersion>1.0.1906.29</FileVersion>
+    <AssemblyVersion>1.0.2001.34</AssemblyVersion>
+    <FileVersion>1.0.2001.34</FileVersion>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
@@ -26,10 +26,17 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="PowerShellStandard.Library" Version="5.1.0">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="SS.NuGet.Publish" Version="1.0.1907.15" />
+    <PackageReference Include="SS.NuGet.Publish" Version="1.0.1912.22">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
 
   </ItemGroup>
 

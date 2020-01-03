@@ -13,7 +13,7 @@ namespace SS.CliMenu.Models
     public class MenuObject
     {
         /// <summary>
-        /// The menu's name, not used internally.
+        /// The menu's name, a unique name used for metric logging.
         /// </summary>
         public string Name { get; set; }
         /// <summary>

@@ -1,8 +1,13 @@
-﻿using SS.CliMenu.Models;
+﻿using Microsoft.ApplicationInsights;
+using SS.CliMenu.Metrics;
+using SS.CliMenu.Models;
+using SS.CliMenu.Properties;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
@@ -26,6 +31,13 @@ namespace SS.CliMenu
     [Cmdlet(VerbsCommon.Show, "CliMenu", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High)]
     public class ShowCliMenuCmdLet : UICmdLet
     {
+        private string userSelection;
+
+        public ShowCliMenuCmdLet()
+        {
+            MetricData = new MetricData();
+        }
+
         /// <summary>
         /// The index of the menu item to invoke.
         /// <para type="description">The index of the menu item to invoke.</para>
@@ -57,21 +69,103 @@ namespace SS.CliMenu
         /// </summary>
         [Parameter]
         public Action<MenuObject, CliMenuOptions> HeaderFunc { get; set; }
-
         /// <summary>
-        /// 
+        /// Metric data used for metric logging.
+        /// <para type="description">Metric data used for metric logging.</para>
         /// </summary>
-        protected override void BeginProcessing()
+        [Parameter]
+        [ValidateNotNull]
+        public MetricData MetricData { get; set; }
+
+        protected override string DataCollectionWarning
         {
-            WriteVerbose($"{MyInvocation.InvocationName} - START");
-            base.BeginProcessing();
+            get
+            {
+                if (MetricData.LogPIIData)
+                    return string.Format(CultureInfo.CurrentCulture, Resources.NotAnonDataCollectionMessage, MetricData.DataCollectedBy);
+                else
+                    return string.Format(CultureInfo.CurrentCulture, Resources.AnonDataCollectionMessage, MetricData.DataCollectedBy);
+            }
+        }
+
+        protected override string InstrumentationKey
+        {
+            get
+            {
+                return MetricData.CollectionKey;
+            }
+        }
+
+        protected override string ProductName => MetricData?.Product ?? ".Default";
+
+        protected override void InitializeQosEvent()
+        {
+            if (MetricData == null)
+                MetricData = new MetricData();
+            this._metricHelper.LogPIIData = MetricData.LogPIIData;
+
+            var commandAlias = this.GetType().Name;
+            if (this.MyInvocation != null && this.MyInvocation.MyCommand != null)
+            {
+                commandAlias = this.MyInvocation.MyCommand.Name;
+            }
+
+            _qosEvent = new PSQoSEvent()
+            {
+                CommandName = commandAlias,
+                Id = Menu.Name,
+                Name = Menu.Name,
+                Title = Menu.DisplayName,
+                ModuleName = MetricData.ModuleName ?? $"{this.MyInvocation.MyCommand.ModuleName}",
+                ModuleVersion = MetricData.ModuleVersion ?? $"{this.MyInvocation.MyCommand.Version}",
+                UserAgent = MetricData.UserAgent,
+                AppVersion = MetricData.AppVersion,
+                RoleName = MetricData.RoleName,
+                AccountId = MetricData.AccountId,
+                ClientRequestId = this._clientRequestId,
+                SessionId = _sessionId,
+                IsSuccess = true,
+                ParameterSetName = this.ParameterSetName
+            };
+
+            if (this.MyInvocation != null && !string.IsNullOrWhiteSpace(this.MyInvocation.InvocationName))
+            {
+                _qosEvent.InvocationName = this.MyInvocation.InvocationName;
+            }
+
+            if (this.MyInvocation != null && this.MyInvocation.BoundParameters != null
+                && this.MyInvocation.BoundParameters.Keys != null)
+            {
+                _qosEvent.Parameters = string.Join(" ",
+                    this.MyInvocation.BoundParameters.Keys.Select(
+                        s => string.Format(CultureInfo.InvariantCulture, "-{0} ***", s)));
+            }
+
+            if (!string.IsNullOrWhiteSpace(MetricData.AuthenticatedUserId) &&
+                this._metricHelper.LogPIIData)
+            {
+                _qosEvent.AuthenticatedUserId = MetricData.AuthenticatedUserId;
+            }
+            if (!string.IsNullOrWhiteSpace(MetricData.UserId) &&
+                MetricData.UserId != "defaultid")
+            {
+                if (this._metricHelper.LogPIIData)
+                    _qosEvent.Uid = MetricData.UserId;
+                else
+                    _qosEvent.Uid = MetricHelper.GenerateSha256HashString(MetricData.UserId);
+            }
+            else
+            {
+                _qosEvent.Uid = "defaultid";
+            }
         }
 
         /// <summary>
         /// 
         /// </summary>
-        protected override void ProcessRecord()
+        public override void ExecuteCmdlet()
         {
+            base.ExecuteCmdlet();
             try
             {
                 MenuItemObject menuSelected = null;
@@ -149,9 +243,9 @@ namespace SS.CliMenu
                 #endregion
                 menuSelected = null;
                 #region Show Menu
+                Stopwatch processingTime = Stopwatch.StartNew();
                 Regex rxOption = new Regex("^\\d+$");
                 var menuLines = new ArrayList();
-                opts = GetVariableValue("CliMenuOptions", new CliMenuOptions(this.Host.UI.RawUI.WindowSize.Width)) as CliMenuOptions;
 
                 if (Menu == null)
                 {
@@ -159,16 +253,16 @@ namespace SS.CliMenu
                     return;
                 }
 
-                var menuFrame = new string(opts.MenuFillChar, (opts.MaxWidth - 2));
-                var menuEmptyLine = new string(' ', (opts.MaxWidth - 2));
+                var menuFrame = new string(MenuOptions.MenuFillChar, (MenuOptions.MaxWidth - 2));
+                var menuEmptyLine = new string(' ', (MenuOptions.MaxWidth - 2));
                 // Top Header border
-                WriteMenuLine(menuFrame, opts.MenuFillColor);
+                WriteMenuLine(menuFrame, MenuOptions.MenuFillColor);
                 // Menu Display Name
-                WriteMenuLine(Menu.DisplayName, opts.MenuNameColor);
+                WriteMenuLine(Menu.DisplayName, MenuOptions.MenuNameColor);
                 if (!string.IsNullOrWhiteSpace(Menu.Description))
-                    WriteMenuLine(Menu.Description, opts.MenuNameColor);
+                    WriteMenuLine(Menu.Description, MenuOptions.MenuNameColor);
 
-                WriteMenuLine(menuEmptyLine, opts.MenuFillColor);
+                WriteMenuLine(menuEmptyLine, MenuOptions.MenuFillColor);
 
                 if (HeaderScript != null)
                 {
@@ -181,11 +275,11 @@ namespace SS.CliMenu
                         WriteError(ex.ErrorRecord);
                     }
                 }
-                else if (opts.HeaderScript != null)
+                else if (MenuOptions.HeaderScript != null)
                 {
                     try
                     {
-                        opts.HeaderScript.InvokeWithContext(null, null);
+                        MenuOptions.HeaderScript.InvokeWithContext(null, null);
                     }
                     catch (RuntimeException ex)
                     {
@@ -196,18 +290,18 @@ namespace SS.CliMenu
                 {
                     try
                     {
-                        HeaderFunc(this.Menu, opts);
+                        HeaderFunc(this.Menu, MenuOptions);
                     }
                     catch (RuntimeException ex)
                     {
                         WriteError(ex.ErrorRecord);
                     }
                 }
-                else if (opts.HeaderFunc != null)
+                else if (MenuOptions.HeaderFunc != null)
                 {
                     try
                     {
-                        opts.HeaderFunc(this.Menu, opts);
+                        MenuOptions.HeaderFunc(this.Menu, MenuOptions);
                     }
                     catch (RuntimeException ex)
                     {
@@ -216,15 +310,15 @@ namespace SS.CliMenu
                 }
                 else
                 {
-                    WriteMenuLine(opts.Heading, opts.HeadingColor);
-                    WriteMenuLine(menuEmptyLine, opts.MenuFillColor);
-                    WriteMenuLine(opts.SubHeading, opts.SubHeadingColor);
+                    WriteMenuLine(MenuOptions.Heading, MenuOptions.HeadingColor);
+                    WriteMenuLine(menuEmptyLine, MenuOptions.MenuFillColor);
+                    WriteMenuLine(MenuOptions.SubHeading, MenuOptions.SubHeadingColor);
                 }
-                WriteMenuLine(menuEmptyLine, opts.MenuFillColor);
+                WriteMenuLine(menuEmptyLine, MenuOptions.MenuFillColor);
 
                 // Bottom Header border
-                WriteMenuLine(menuFrame, opts.MenuFillColor);
-                WriteMenuLine(menuEmptyLine, opts.MenuFillColor);
+                WriteMenuLine(menuFrame, MenuOptions.MenuFillColor);
+                WriteMenuLine(menuEmptyLine, MenuOptions.MenuFillColor);
 
                 var idxOptions = this.Menu.MenuItems.Where(i => rxOption.IsMatch($"{i.Option}")).Select(i => int.Parse(i.Option)).ToArray();
                 int maxIdxOptions = (idxOptions.Length == 0) ? 0 : idxOptions.OrderBy(i => i).Max();
@@ -234,9 +328,9 @@ namespace SS.CliMenu
                 {
                     ConsoleColor menuColor;
                     if (!string.IsNullOrWhiteSpace(item.Option) && !(item.Func == null && item.Script == null))
-                        menuColor = opts.MenuItemColor;
+                        menuColor = MenuOptions.MenuItemColor;
                     else
-                        menuColor = opts.ViewOnlyColor;
+                        menuColor = MenuOptions.ViewOnlyColor;
 
                     visible = true;
                     if (item.VisibleScript != null)
@@ -288,20 +382,22 @@ namespace SS.CliMenu
                     }
                 }
 
-                WriteMenuLine(menuEmptyLine, opts.MenuFillColor);
+                WriteMenuLine(menuEmptyLine, MenuOptions.MenuFillColor);
                 WriteMenuLine("Q Exit Menu", ConsoleColor.Red, true);
 
-                WriteMenuLine(menuEmptyLine, opts.MenuFillColor);
-                WriteMenuLine(menuEmptyLine, opts.MenuFillColor);
+                WriteMenuLine(menuEmptyLine, MenuOptions.MenuFillColor);
+                WriteMenuLine(menuEmptyLine, MenuOptions.MenuFillColor);
 
-                WriteMenuLine(opts.FooterText, opts.FooterTextColor);
-                WriteMenuLine(menuEmptyLine, opts.MenuFillColor);
+                WriteMenuLine(MenuOptions.FooterText, MenuOptions.FooterTextColor);
+                WriteMenuLine(menuEmptyLine, MenuOptions.MenuFillColor);
 
                 // Bottom border
-                WriteMenuLine(menuFrame, opts.MenuFillColor);
+                WriteMenuLine(menuFrame, MenuOptions.MenuFillColor);
 
                 Host.UI.Write($"Please choose a option [{DefaultOption}] ");
-                var userSelection = Host.UI.ReadLine();
+                processingTime.Stop();
+                LogPerfEvent(processingTime.Elapsed + MetricData.ProcessingTime);
+                userSelection = Host.UI.ReadLine();
                 WriteVerbose($"Selection: {userSelection}");
 
                 if (string.IsNullOrWhiteSpace(userSelection))
@@ -311,6 +407,7 @@ namespace SS.CliMenu
                 }
                 else
                     WriteVerbose($"Selection: {userSelection}");
+                _qosEvent.Selected = userSelection;
 
                 if (userSelection.Equals("Q", StringComparison.CurrentCultureIgnoreCase))
                 {
@@ -432,17 +529,8 @@ namespace SS.CliMenu
             }
             finally
             {
-                base.ProcessRecord();
-            }
-        }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        protected override void EndProcessing()
-        {
-            WriteVerbose($"{MyInvocation.InvocationName} - END");
-            base.EndProcessing();
+            }
         }
 
         MenuLine NewMenuLine(string text, ConsoleColor color = ConsoleColor.White, bool isMenuItem = false)
@@ -452,14 +540,14 @@ namespace SS.CliMenu
             if (isMenuItem)
             {
                 textLine = $"  {text}";
-                textLine += new string(' ', ((opts.MaxWidth - 1) - textLine.Length - 1));
+                textLine += new string(' ', ((MenuOptions.MaxWidth - 1) - textLine.Length - 1));
             }
             else
             {
                 var textLength = text.Length;
-                var textBlanks = ((opts.MaxWidth - 2) - textLength) / 2;
+                var textBlanks = ((MenuOptions.MaxWidth - 2) - textLength) / 2;
                 textLine = new string(' ', textBlanks) + text;
-                textLine += new string(' ', ((opts.MaxWidth - 1) - textLine.Length - 1));
+                textLine += new string(' ', ((MenuOptions.MaxWidth - 1) - textLine.Length - 1));
             }
 
             return new MenuLine

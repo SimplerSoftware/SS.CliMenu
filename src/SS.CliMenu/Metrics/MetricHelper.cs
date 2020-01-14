@@ -154,56 +154,69 @@ namespace SS.CliMenu.Metrics
             }
         }
 
-        public void LogQoSEvent(PSQoSEvent qos, bool isUsageMetricEnabled, bool isErrorMetricEnabled)
+        public bool LogQoSEvent(PSQoSEvent qos, bool isUsageMetricEnabled, bool isErrorMetricEnabled)
         {
+            bool sent = false;
             if (qos == null || !IsMetricTermAccepted())
             {
-                return;
+                return sent;
             }
 
             if (isUsageMetricEnabled)
             {
-                LogUsageEvent(qos);
+                if (LogUsageEvent(qos))
+                    sent = true;
             }
 
             if (isErrorMetricEnabled && qos.Exception != null)
             {
-                LogExceptionEvent(qos);
+                if (LogExceptionEvent(qos))
+                    sent = true;
             }
+            return sent;
         }
-        public void LogPerfEvent(PSQoSEvent qos, bool isUsageMetricEnabled, bool isErrorMetricEnabled)
+        public bool LogPerfEvent(PSQoSEvent qos, bool isUsageMetricEnabled, bool isErrorMetricEnabled)
         {
+            bool sent = false;
             if (qos == null || !IsMetricTermAccepted())
             {
-                return;
+                return sent;
             }
 
             if (isUsageMetricEnabled)
             {
-                LogPerfEvent(qos);
+                if (LogPerfEvent(qos))
+                    sent = true;
             }
 
             if (isErrorMetricEnabled && qos.Exception != null)
             {
-                LogExceptionEvent(qos);
+                if (LogExceptionEvent(qos))
+                    sent = true;
             }
+
+            return sent;
         }
 
-        public void LogCustomEvent<T>(string eventName, T payload, bool force = false)
+        public bool LogCustomEvent<T>(string eventName, T payload, bool force = false)
         {
+            bool sent = false;
             if (payload == null || (!force && !IsMetricTermAccepted()))
             {
-                return;
+                return sent;
             }
 
             foreach (TelemetryClient client in TelemetryClients)
             {
                 client.TrackEvent(eventName, SerializeCustomEventPayload(payload));
+                sent = true;
             }
+            return sent;
         }
 
-        private void LogUsageEvent(PSQoSEvent qos)
+        private bool LogUsageEvent(PSQoSEvent qos)
         {
+            bool sent = false;
             if (qos != null)
             {
                 foreach (TelemetryClient client in TelemetryClients)
@@ -217,31 +230,16 @@ namespace SS.CliMenu.Metrics
                     LoadTelemetryClientContext(qos, pageViewTelemetry.Context);
                     PopulatePropertiesFromQos(qos, pageViewTelemetry.Properties);
 
-                    #region User-Agent work around
-                    try
-                    {
-                        // Browser is only read from User-Agent header, will create issue with MS on Github. Should also be using Context.User.UserAgent
-                        // https://github.com/microsoft/ApplicationInsights-Announcements/issues/3
-                        Microsoft.ApplicationInsights.Channel.Transmission trans = new Microsoft.ApplicationInsights.Channel.Transmission(new Uri("http://www.contoso.com/"), new byte[0], "", "");
-                        Type type = typeof(Microsoft.ApplicationInsights.Channel.Transmission);
-                        System.Reflection.FieldInfo info = type.GetField("client", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
-                        System.Net.Http.HttpClient value = info.GetValue(null) as System.Net.Http.HttpClient;
-                        if (!value.DefaultRequestHeaders.UserAgent.Contains(qos.UserAgent))
-                        {
-                            value.DefaultRequestHeaders.UserAgent.Clear();
-                            value.DefaultRequestHeaders.UserAgent.Add(qos.UserAgent);
-                        }
-                    }
-                    catch { }
-                    #endregion
-
                     client.TrackPageView(pageViewTelemetry);
+                    sent = true;
                 }
             }
+            return sent;
         }
 
-        private void LogPerfEvent(PSQoSEvent qos)
+        private bool LogPerfEvent(PSQoSEvent qos)
         {
+            bool sent = false;
             if (qos != null)
             {
                 foreach (TelemetryClient client in TelemetryClients)
@@ -256,34 +254,19 @@ namespace SS.CliMenu.Metrics
                     LoadTelemetryClientContext(qos, perf.Context);
                     PopulatePropertiesFromQos(qos, perf.Properties);
 
-                    #region User-Agent work around
-                    try
-                    {
-                        // Browser is only read from User-Agent header, will create issue with MS on Github. Should also be using Context.User.UserAgent
-                        // https://github.com/microsoft/ApplicationInsights-Announcements/issues/3
-                        Microsoft.ApplicationInsights.Channel.Transmission trans = new Microsoft.ApplicationInsights.Channel.Transmission(new Uri("http://www.contoso.com/"), new byte[0], "", "");
-                        Type type = typeof(Microsoft.ApplicationInsights.Channel.Transmission);
-                        System.Reflection.FieldInfo info = type.GetField("client", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
-                        System.Net.Http.HttpClient value = info.GetValue(null) as System.Net.Http.HttpClient;
-                        if (!value.DefaultRequestHeaders.UserAgent.Contains(qos.UserAgent))
-                        {
-                            value.DefaultRequestHeaders.UserAgent.Clear();
-                            value.DefaultRequestHeaders.UserAgent.Add(qos.UserAgent);
-                        }
-                    }
-                    catch { }
-                    #endregion
-
                     client.Track(perf);
+                    sent = true;
                 }
             }
+            return sent;
         }
 
-        private void LogExceptionEvent(PSQoSEvent qos)
+        private bool LogExceptionEvent(PSQoSEvent qos)
         {
+            bool sent = false;
             if (qos == null || qos.Exception == null)
             {
-                return;
+                return sent;
             }
 
             Dictionary<string, double> eventMetrics = new Dictionary<string, double>();
@@ -313,7 +296,9 @@ namespace SS.CliMenu.Metrics
                     innerEx = innerEx.InnerException;
                 }
                 client.TrackException(null, eventProperties, eventMetrics);
+                sent = true;
             }
+            return sent;
         }
 
         private void LoadTelemetryClientContext(PSQoSEvent qos, TelemetryContext clientContext)
@@ -326,6 +311,24 @@ namespace SS.CliMenu.Metrics
                 clientContext.User.AccountId = qos.AccountId;
                 // This is not used for some reason, will create issue with MS on Github
                 //clientContext.User.UserAgent = qos.UserAgent ?? SSPowerShell.UserAgentValue;
+                #region User-Agent work around
+                try
+                {
+                    // Browser is only read from User-Agent header, will create issue with MS on Github. Should also be using Context.User.UserAgent
+                    // https://github.com/microsoft/ApplicationInsights-Announcements/issues/3
+                    Microsoft.ApplicationInsights.Channel.Transmission trans = new Microsoft.ApplicationInsights.Channel.Transmission(new Uri("http://www.contoso.com/"), new byte[0], "", "");
+                    Type type = typeof(Microsoft.ApplicationInsights.Channel.Transmission);
+                    System.Reflection.FieldInfo info = type.GetField("client", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+                    System.Net.Http.HttpClient value = info.GetValue(null) as System.Net.Http.HttpClient;
+                    if (!value.DefaultRequestHeaders.UserAgent.Contains(qos.UserAgent))
+                    {
+                        value.DefaultRequestHeaders.UserAgent.Clear();
+                        value.DefaultRequestHeaders.UserAgent.Add(qos.UserAgent);
+                    }
+                }
+                catch { }
+                #endregion
+
                 clientContext.Component.Version = qos.AppVersion;
                 clientContext.Session.Id = qos.SessionId;
                 clientContext.Device.OperatingSystem = Environment.OSVersion.ToString();

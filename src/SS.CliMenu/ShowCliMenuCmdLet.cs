@@ -113,9 +113,9 @@ namespace SS.CliMenu
             _qosEvent = new PSQoSEvent()
             {
                 CommandName = commandAlias,
-                Id = Menu.Name,
-                Name = Menu.Name,
-                Title = Menu.DisplayName,
+                Id = Menu?.Name,
+                Name = Menu?.Name,
+                Title = Menu?.DisplayName,
                 ModuleName = MetricData.ModuleName ?? $"{this.MyInvocation.MyCommand.ModuleName}",
                 ModuleVersion = MetricData.ModuleVersion ?? $"{this.MyInvocation.MyCommand.Version}",
                 UserAgent = MetricData.UserAgent,

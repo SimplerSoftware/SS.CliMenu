@@ -65,7 +65,14 @@ namespace SS.CliMenu
         {
             
         }
-
+        protected override void LogCmdletStartInvocationInfo()
+        {
+            // We don't log anything for this cmdlet
+        }
+        protected override void LogCmdletEndInvocationInfo()
+        {
+            // We don't log anything for this cmdlet
+        }
         protected override bool IsUsageMetricEnabled => false;
         protected override bool IsErrorMetricEnabled => false;
         protected override string ProductName => ".Default";

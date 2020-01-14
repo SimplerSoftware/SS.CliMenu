@@ -121,7 +121,6 @@ namespace SS.CliMenu.Metrics
                 }
             }
 
-            InitializeQosEvent();
             LogCmdletStartInvocationInfo();
             base.BeginProcessing();
         }
@@ -135,6 +134,7 @@ namespace SS.CliMenu.Metrics
         {
             try
             {
+                InitializeQosEvent();
                 base.ProcessRecord();
                 this.ExecuteCmdlet();
             }
@@ -181,9 +181,10 @@ namespace SS.CliMenu.Metrics
             try
             {
                 _metricHelper.SetPSHost(this.Host);
-                _metricHelper.LogQoSEvent(_qosEvent, IsUsageMetricEnabled, IsErrorMetricEnabled);
+                bool sent = _metricHelper.LogQoSEvent(_qosEvent, IsUsageMetricEnabled, IsErrorMetricEnabled);
                 _metricHelper.FlushMetric();
-                WriteDebug("Finish sending metric.");
+                if (sent)
+                    WriteDebug("Finish sending metric.");
             }
             catch (Exception e)
             {
@@ -218,9 +219,10 @@ namespace SS.CliMenu.Metrics
             {
                 _qosEvent.ProcessingTime = processingTime;
                 _metricHelper.SetPSHost(this.Host);
-                _metricHelper.LogPerfEvent(_qosEvent, IsUsageMetricEnabled, IsErrorMetricEnabled);
+                bool sent = _metricHelper.LogPerfEvent(_qosEvent, IsUsageMetricEnabled, IsErrorMetricEnabled);
                 _metricHelper.FlushMetric();
-                WriteDebug("Finish sending performance metric.");
+                if (sent)
+                    WriteDebug("Finish sending performance metric.");
             }
             catch (Exception e)
             {

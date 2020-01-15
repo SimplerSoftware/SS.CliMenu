@@ -316,10 +316,9 @@ namespace SS.CliMenu.Metrics
                 {
                     // Browser is only read from User-Agent header, will create issue with MS on Github. Should also be using Context.User.UserAgent
                     // https://github.com/microsoft/ApplicationInsights-Announcements/issues/3
-                    Microsoft.ApplicationInsights.Channel.Transmission trans = new Microsoft.ApplicationInsights.Channel.Transmission(new Uri("http://www.contoso.com/"), new byte[0], "", "");
-                    Type type = typeof(Microsoft.ApplicationInsights.Channel.Transmission);
-                    System.Reflection.FieldInfo info = type.GetField("client", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
-                    System.Net.Http.HttpClient value = info.GetValue(null) as System.Net.Http.HttpClient;
+                    Type typeTransmission = typeof(Microsoft.ApplicationInsights.Channel.Transmission);
+                    System.Reflection.FieldInfo fClient = typeTransmission.GetField("client", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+                    System.Net.Http.HttpClient value = fClient.GetValue(null) as System.Net.Http.HttpClient;
                     if (!value.DefaultRequestHeaders.UserAgent.Contains(qos.UserAgent))
                     {
                         value.DefaultRequestHeaders.UserAgent.Clear();

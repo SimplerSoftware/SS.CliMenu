@@ -24,5 +24,12 @@ CLI menu infrastructure for PowerShell.
 -->
 ## Change Log
 ### Upcoming Release 
+
+### 2020.03.17
+* Support PS Desktop + PS Core
+* Update module manifest to include Core & Desktop as compatible.
+* Set PowerShellVersion min version to 5.1
+
+### 2020.01.14
 * Implement MetricData logging capabilities.
   - Menu authors can opt into sending metric logs to App Insight.

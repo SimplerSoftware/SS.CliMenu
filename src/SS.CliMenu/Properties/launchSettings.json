@@ -1,9 +1,34 @@
 {
   "profiles": {
-    "SS.CliMenu.Standard": {
+    "PowerShell Core": {
       "commandName": "Executable",
-      "executablePath": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
-      "commandLineArgs": "-NoExit -command \"Import-Module SS.CliMenu\""
+      "executablePath": "pwsh.exe",
+      "commandLineArgs": "-NoExit -ExecutionPolicy ByPass -Command \"Import-Module '$(TargetDir)$(TargetName).psd1'\"",
+      "workingDirectory": "%UserProfile%"
+    },
+    "PowerShell Core 6 x64": {
+      "commandName": "Executable",
+      "executablePath": "%ProgramW6432%\\PowerShell\\6\\pwsh.exe",
+      "commandLineArgs": "-NoExit -ExecutionPolicy ByPass -Command \"Import-Module '$(TargetDir)$(TargetName).psd1'\"",
+      "workingDirectory": "%UserProfile%"
+    },
+    "PowerShell Core 6 x86": {
+      "commandName": "Executable",
+      "executablePath": "%ProgramFiles(x86)%\\PowerShell\\6\\pwsh.exe",
+      "commandLineArgs": "-NoExit -ExecutionPolicy ByPass -Command \"Import-Module '$(TargetDir)$(TargetName).psd1'\"",
+      "workingDirectory": "%UserProfile%"
+    },
+    "PowerShell Desktop x64": {
+      "commandName": "Executable",
+      "executablePath": "%SystemRoot%\\system32\\WindowsPowerShell\\v1.0\\powershell.exe",
+      "commandLineArgs": "-NoExit -ExecutionPolicy ByPass -Command \"Import-Module '$(TargetDir)$(TargetName).psd1'\"",
+      "workingDirectory": "%UserProfile%"
+    },
+    "PowerShell Desktop x86": {
+      "commandName": "Executable",
+      "executablePath": "%SystemRoot%\\syswow64\\WindowsPowerShell\\v1.0\\powershell.exe",
+      "commandLineArgs": "-NoExit -ExecutionPolicy ByPass -Command \"Import-Module '$(TargetDir)$(TargetName).psd1'\"",
+      "workingDirectory": "%UserProfile%"
     }
   }
 }
